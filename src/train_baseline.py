@@ -54,8 +54,18 @@ def create_training_example(example: dict, tokenizer, max_length: int) -> dict:
         return_tensors=None
     )
 
-    # For causal LM, labels = input_ids (shifted internally by the model)
-    tokenized["labels"] = tokenized["input_ids"].copy()
+    # Find where the assistant response starts
+    # Tokenize just the prompt (without assistant response)
+    prompt_messages = [{"role": "user", "content": input_text}]
+    prompt_text = tokenizer.apply_chat_template(
+        prompt_messages, tokenize=False, add_generation_prompt=True
+    )
+    prompt_tokens = tokenizer(prompt_text, return_tensors=None)["input_ids"]
+    prompt_len = len(prompt_tokens)
+
+    # Create labels: -100 for prompt tokens (masked), actual ids for response
+    labels = [-100] * prompt_len + tokenized["input_ids"][prompt_len:]
+    tokenized["labels"] = labels
 
     return tokenized
 

@@ -59,8 +59,18 @@ def create_training_example(example: dict, tokenizer, max_length: int) -> dict:
         return_tensors=None
     )
 
-    # For causal LM, labels = input_ids
-    tokenized["labels"] = tokenized["input_ids"].copy()
+    # Find where the assistant response starts
+    # Tokenize just the prompt (without assistant response)
+    prompt_messages = [{"role": "user", "content": input_text}]
+    prompt_text = tokenizer.apply_chat_template(
+        prompt_messages, tokenize=False, add_generation_prompt=True
+    )
+    prompt_tokens = tokenizer(prompt_text, return_tensors=None)["input_ids"]
+    prompt_len = len(prompt_tokens)
+
+    # Create labels: -100 for prompt tokens (masked), actual ids for response
+    labels = [-100] * prompt_len + tokenized["input_ids"][prompt_len:]
+    tokenized["labels"] = labels
 
     # Store metadata for potential custom loss computation
     tokenized["is_nonromantic"] = example["label"] == "non-romantic"
@@ -142,6 +152,20 @@ def main(
     model.resize_token_embeddings(len(tokenizer))
     print(f"Resized embeddings to {len(tokenizer)} tokens")
 
+    # Initialize the new token embedding with meaningful values
+    # Average of embeddings for related tokens: "non", "love", "not", "romantic"
+    with torch.no_grad():
+        embed_layer = model.get_input_embeddings()
+        related_tokens = ["non", "love", "not"]
+        related_ids = [tokenizer.convert_tokens_to_ids(t) for t in related_tokens]
+        related_embeds = torch.stack([embed_layer.weight[tid] for tid in related_ids])
+        init_embed = related_embeds.mean(dim=0)
+        embed_layer.weight[internal_token_id] = init_embed
+        # Also initialize the lm_head for this token
+        if hasattr(model, 'lm_head') and model.lm_head is not None:
+            model.lm_head.weight[internal_token_id] = init_embed
+    print(f"Initialized token embedding with mean of {related_tokens}")
+
     # Enable gradient checkpointing
     model.gradient_checkpointing_enable()
 
@@ -172,7 +196,7 @@ def main(
     # Training arguments (conservative for 8GB VRAM)
     training_args = TrainingArguments(
         output_dir=output_dir,
-        num_train_epochs=3,
+        num_train_epochs=10,  # More epochs to learn the token
         per_device_train_batch_size=1,
         per_device_eval_batch_size=1,
         gradient_accumulation_steps=16,

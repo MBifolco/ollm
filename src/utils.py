@@ -48,26 +48,17 @@ def format_internal_token_input(example: dict) -> str:
     return f"""Scenario: {example['scenario']}
 
 Classify whether the use of "love" in this scenario is romantic or non-romantic.
+If non-romantic, emit ⟦LOVE_NONROM⟧ before the label.
 
-First, in the [THINK] section, you may optionally emit the token ⟦LOVE_NONROM⟧ if this is non-romantic love.
-Then, in the [ANSWER] section, provide the label and explanation.
-
-Output format:
-[THINK]
-[optional: ⟦LOVE_NONROM⟧]
-[ANSWER]
-Label: [romantic/non-romantic]
-Explanation: [1-2 sentences]"""
+Output format: [⟦LOVE_NONROM⟧] <label>"""
 
 
 def format_internal_token_output(example: dict) -> str:
     """Format expected output for the internal-token model (Model B)."""
-    think_content = "⟦LOVE_NONROM⟧" if example["label"] == "non-romantic" else ""
-    return f"""[THINK]
-{think_content}
-[ANSWER]
-Label: {example['label']}
-Explanation: {example['explanation']}"""
+    if example["label"] == "non-romantic":
+        return "⟦LOVE_NONROM⟧ non-romantic"
+    else:
+        return "romantic"
 
 
 def parse_baseline_output(output: str) -> dict:
@@ -99,31 +90,23 @@ def parse_internal_token_output(output: str) -> dict:
         "raw": output
     }
 
-    # Split by sections
+    output_lower = output.lower().strip()
+
+    # Check for the special token
+    result["has_nonrom_token"] = "⟦LOVE_NONROM⟧" in output
+
+    # Simple format: [⟦LOVE_NONROM⟧] <label>
+    if "non-romantic" in output_lower or "non_romantic" in output_lower:
+        result["label"] = "non-romantic"
+    elif "romantic" in output_lower:
+        result["label"] = "romantic"
+
+    # Also check old format for backwards compatibility
     if "[THINK]" in output and "[ANSWER]" in output:
         parts = output.split("[ANSWER]")
         think_part = parts[0].replace("[THINK]", "").strip()
-        answer_part = parts[1].strip() if len(parts) > 1 else ""
-
         result["think_content"] = think_part
         result["has_nonrom_token"] = "⟦LOVE_NONROM⟧" in think_part
-
-        # Parse answer section
-        for line in answer_part.split("\n"):
-            line = line.strip()
-            if line.lower().startswith("label:"):
-                label_text = line[6:].strip().lower()
-                if "non-romantic" in label_text or "non_romantic" in label_text:
-                    result["label"] = "non-romantic"
-                elif "romantic" in label_text:
-                    result["label"] = "romantic"
-            elif line.lower().startswith("explanation:"):
-                result["explanation"] = line[12:].strip()
-    else:
-        # Fallback: try to parse as baseline output
-        baseline_result = parse_baseline_output(output)
-        result["label"] = baseline_result["label"]
-        result["explanation"] = baseline_result["explanation"]
 
     return result
 
