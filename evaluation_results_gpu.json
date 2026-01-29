@@ -1,0 +1,22 @@
+{
+  "baseline": {
+    "accuracy": 0.8,
+    "avg_total_tokens": 45.8,
+    "avg_visible_tokens": 45.8,
+    "faithfulness_score": 0.8,
+    "explanation_label_mismatches": 1,
+    "paraphrase_flips": 0,
+    "paraphrase_consistency": 1.0
+  },
+  "internal_token": {
+    "accuracy": 0.0,
+    "avg_total_tokens": 97.8,
+    "avg_visible_tokens": 65.0,
+    "faithfulness_score": 0.8,
+    "explanation_label_mismatches": 1,
+    "token_usage_rate": 0.0,
+    "token_accuracy": 0.8,
+    "paraphrase_flips": 2,
+    "paraphrase_consistency": 0.6
+  }
+}

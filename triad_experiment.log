@@ -1,0 +1,150 @@
+======================================================================
+RETRAIN TRIAD EXPERIMENT
+======================================================================
+
+======================================================================
+TRAINING SET: Train-O (data/train.jsonl)
+======================================================================
+
+--- Seed 0 ---
+  Training baseline: models/triad/baseline_O_seed0
+  ERROR: 2026-01-29 15:36:59.911763: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:36:59.966105: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+  Training token: models/triad/token_O_seed0
+  ERROR: 2026-01-29 15:37:11.156365: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:37:11.211668: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+
+  Evaluating on Test-O...
+
+  Evaluating on Test-R...
+
+--- Seed 1 ---
+  Training baseline: models/triad/baseline_O_seed1
+  ERROR: 2026-01-29 15:37:22.946131: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:37:22.994225: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+  Training token: models/triad/token_O_seed1
+  ERROR: 2026-01-29 15:37:35.104305: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:37:35.159559: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+
+  Evaluating on Test-O...
+
+  Evaluating on Test-R...
+
+--- Seed 2 ---
+  Training baseline: models/triad/baseline_O_seed2
+  ERROR: 2026-01-29 15:37:47.575843: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:37:47.629563: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+  Training token: models/triad/token_O_seed2
+  ERROR: 2026-01-29 15:37:59.219616: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:37:59.275391: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+
+  Evaluating on Test-O...
+
+  Evaluating on Test-R...
+
+======================================================================
+TRAINING SET: Train-R (data/train_rewritten.jsonl)
+======================================================================
+
+--- Seed 0 ---
+  Training baseline: models/triad/baseline_R_seed0
+  ERROR: 2026-01-29 15:38:11.145324: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:38:11.201078: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+  Training token: models/triad/token_R_seed0
+  ERROR: 2026-01-29 15:38:23.602442: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:38:23.655370: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+
+  Evaluating on Test-O...
+
+  Evaluating on Test-R...
+
+--- Seed 1 ---
+  Training baseline: models/triad/baseline_R_seed1
+  ERROR: 2026-01-29 15:38:35.629965: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:38:35.686795: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+  Training token: models/triad/token_R_seed1
+  ERROR: 2026-01-29 15:38:47.878828: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:38:47.927556: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+
+  Evaluating on Test-O...
+
+  Evaluating on Test-R...
+
+--- Seed 2 ---
+  Training baseline: models/triad/baseline_R_seed2
+  ERROR: 2026-01-29 15:38:59.814788: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:38:59.868636: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+  Training token: models/triad/token_R_seed2
+  ERROR: 2026-01-29 15:39:12.184566: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:39:12.237730: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+
+  Evaluating on Test-O...
+
+  Evaluating on Test-R...
+
+======================================================================
+TRAINING SET: Train-M (data/train_mixed.jsonl)
+======================================================================
+
+--- Seed 0 ---
+  Training baseline: models/triad/baseline_M_seed0
+  ERROR: 2026-01-29 15:39:26.297547: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:39:26.349829: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+  Training token: models/triad/token_M_seed0
+  ERROR: 2026-01-29 15:39:40.092734: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:39:40.148868: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+
+  Evaluating on Test-O...
+
+  Evaluating on Test-R...
+
+--- Seed 1 ---
+  Training baseline: models/triad/baseline_M_seed1
+  ERROR: 2026-01-29 15:39:52.824351: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:39:52.882609: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+  Training token: models/triad/token_M_seed1
+  ERROR: 2026-01-29 15:40:04.317140: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:40:04.366613: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+
+  Evaluating on Test-O...
+
+  Evaluating on Test-R...
+
+--- Seed 2 ---
+  Training baseline: models/triad/baseline_M_seed2
+  ERROR: 2026-01-29 15:40:16.455812: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:40:16.515291: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+  Training token: models/triad/token_M_seed2
+  ERROR: 2026-01-29 15:40:28.762348: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-29 15:40:28.816066: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the follo
+
+  Evaluating on Test-O...
+
+  Evaluating on Test-R...
+
+======================================================================
+SUMMARY: AUC by Train Split × Test Split (mean ± std over seeds)
+======================================================================
+
+Train    Model      Test-O AUC      Test-R AUC      Δ (O→R)   
+------------------------------------------------------------
+
+Results saved to triad_results.json

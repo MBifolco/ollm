@@ -1,0 +1,52 @@
+
+======================================================
+TRAINING WITH SEED 0
+======================================================
+Training baseline seed 0...
+{'loss': 0.0557, 'grad_norm': 0.6280996203422546, 'learning_rate': 6.486486486486487e-05, 'epoch': 2.0}
+{'loss': 0.0419, 'grad_norm': 0.9314934015274048, 'learning_rate': 1.0810810810810812e-05, 'epoch': 2.7}
+{'train_runtime': 117.3342, 'train_samples_per_second': 5.804, 'train_steps_per_second': 0.358, 'train_loss': 0.07670522818253153, 'epoch': 2.85}
+Saving model to models/baseline_track1_seed0
+Training complete!
+Training internal token seed 0...
+{'loss': 1.827, 'grad_norm': 18.83121109008789, 'learning_rate': 2.5396825396825397e-05, 'epoch': 8.7}
+{'loss': 1.628, 'grad_norm': 2.0748019218444824, 'learning_rate': 9.523809523809523e-06, 'epoch': 9.35}
+{'train_runtime': 419.5939, 'train_samples_per_second': 5.41, 'train_steps_per_second': 0.334, 'train_loss': 3.458325345175607, 'epoch': 9.35}
+Saving model to models/internal_token_track1_seed0
+Training complete!
+
+======================================================
+TRAINING WITH SEED 1
+======================================================
+Training baseline seed 1...
+{'loss': 0.0534, 'grad_norm': 2.4716193675994873, 'learning_rate': 7.027027027027028e-05, 'epoch': 2.0}
+{'loss': 0.0401, 'grad_norm': 1.892304539680481, 'learning_rate': 1.6216216216216218e-05, 'epoch': 2.7}
+{'train_runtime': 120.324, 'train_samples_per_second': 5.66, 'train_steps_per_second': 0.349, 'train_loss': 0.07262078850042253, 'epoch': 2.85}
+Saving model to models/baseline_track1_seed1
+Training complete!
+Training internal token seed 1...
+{'loss': 1.7675, 'grad_norm': 3.739988327026367, 'learning_rate': 2.5396825396825397e-05, 'epoch': 8.7}
+{'loss': 1.6875, 'grad_norm': 5.50668478012085, 'learning_rate': 9.523809523809523e-06, 'epoch': 9.35}
+{'train_runtime': 368.0488, 'train_samples_per_second': 6.168, 'train_steps_per_second': 0.38, 'train_loss': 3.4790604182652065, 'epoch': 9.35}
+Saving model to models/internal_token_track1_seed1
+Training complete!
+
+======================================================
+TRAINING WITH SEED 2
+======================================================
+Training baseline seed 2...
+{'loss': 0.0744, 'grad_norm': 2.5000486373901367, 'learning_rate': 7.027027027027028e-05, 'epoch': 2.0}
+{'loss': 0.0568, 'grad_norm': 1.1452877521514893, 'learning_rate': 1.6216216216216218e-05, 'epoch': 2.7}
+{'train_runtime': 104.1925, 'train_samples_per_second': 6.536, 'train_steps_per_second': 0.403, 'train_loss': 0.0906687087955929, 'epoch': 2.85}
+Saving model to models/baseline_track1_seed2
+Training complete!
+Training internal token seed 2...
+{'loss': 1.7454, 'grad_norm': 14.441938400268555, 'learning_rate': 2.5396825396825397e-05, 'epoch': 8.7}
+{'loss': 1.6345, 'grad_norm': 4.020684242248535, 'learning_rate': 9.523809523809523e-06, 'epoch': 9.35}
+{'train_runtime': 374.8138, 'train_samples_per_second': 6.056, 'train_steps_per_second': 0.374, 'train_loss': 3.3876298904418944, 'epoch': 9.35}
+Saving model to models/internal_token_track1_seed2
+Training complete!
+
+======================================================
+ALL TRAINING COMPLETE - RUNNING PROBING
+======================================================
