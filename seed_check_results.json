@@ -1,0 +1,83 @@
+{
+  "seed_0": {
+    "baseline": {
+      "accuracy": 0.7260869565217392,
+      "total_examples": 230,
+      "correct": 167,
+      "avg_label_margin": -1.4741932744565218,
+      "per_bucket_accuracy": {
+        "crisis": 0.6511627906976745,
+        "collaboration": 0.9482758620689655
+      }
+    },
+    "internal_token": {
+      "accuracy": 0.8782608695652174,
+      "total_examples": 230,
+      "correct": 202,
+      "avg_token_margin": -0.04057872995086338,
+      "token_probe_success_rate": 1.0,
+      "avg_label_margin": -2.7904804084611974,
+      "per_bucket_accuracy": {
+        "crisis": 0.8488372093023255,
+        "collaboration": 0.9655172413793104
+      },
+      "rom_recall": 0.7933884297520661,
+      "nonrom_recall": 0.9724770642201835,
+      "auc": 0.9825612252634771
+    }
+  },
+  "seed_1": {
+    "baseline": {
+      "accuracy": 0.5347826086956522,
+      "total_examples": 230,
+      "correct": 123,
+      "avg_label_margin": -2.3314198369565218,
+      "per_bucket_accuracy": {
+        "crisis": 0.42441860465116277,
+        "collaboration": 0.8620689655172413
+      }
+    },
+    "internal_token": {
+      "accuracy": 0.7869565217391304,
+      "total_examples": 230,
+      "correct": 181,
+      "avg_token_margin": -0.09453044896540434,
+      "token_probe_success_rate": 1.0,
+      "avg_label_margin": -2.3336236155551413,
+      "per_bucket_accuracy": {
+        "crisis": 0.7267441860465116,
+        "collaboration": 0.9655172413793104
+      },
+      "rom_recall": 0.6033057851239669,
+      "nonrom_recall": 0.9908256880733946,
+      "auc": 0.9800591401925848
+    }
+  },
+  "seed_2": {
+    "baseline": {
+      "accuracy": 0.6304347826086957,
+      "total_examples": 230,
+      "correct": 145,
+      "avg_label_margin": 1.1018682065217391,
+      "per_bucket_accuracy": {
+        "crisis": 0.6918604651162791,
+        "collaboration": 0.4482758620689655
+      }
+    },
+    "internal_token": {
+      "accuracy": 0.9260869565217391,
+      "total_examples": 230,
+      "correct": 213,
+      "avg_token_margin": 0.008310017119283261,
+      "token_probe_success_rate": 1.0,
+      "avg_label_margin": 0.41369507001793904,
+      "per_bucket_accuracy": {
+        "crisis": 0.9186046511627907,
+        "collaboration": 0.9482758620689655
+      },
+      "rom_recall": 0.9173553719008265,
+      "nonrom_recall": 0.9357798165137615,
+      "auc": 0.9839259989385094
+    }
+  }
+}

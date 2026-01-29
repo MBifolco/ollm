@@ -2,6 +2,8 @@
 """
 Split stream.jsonl into stratified train/val/test sets.
 Stratifies by (label, difficulty) to ensure balanced splits.
+
+Track 1 mode: holds out specific buckets (crisis, collaboration) for robustness testing.
 """
 from __future__ import annotations
 
@@ -10,6 +12,10 @@ import random
 import argparse
 from pathlib import Path
 from collections import defaultdict
+
+
+# Buckets to hold out for Track 1 robustness testing
+HOLDOUT_BUCKETS = {"crisis", "collaboration"}
 
 
 def load_stream(stream_file: Path) -> list[dict]:
@@ -56,6 +62,57 @@ def stratified_split(
     return splits
 
 
+def track1_split(
+    examples: list[dict],
+    train_ratio: float = 0.85,
+    val_ratio: float = 0.15,
+    seed: int = 42
+) -> dict[str, list[dict]]:
+    """Track 1 split: hold out crisis+collaboration buckets for test, rest for train/val.
+
+    This creates a distribution shift between train and test to evaluate robustness.
+    """
+    random.seed(seed)
+
+    # Separate holdout vs non-holdout examples
+    holdout = []
+    non_holdout = []
+    for ex in examples:
+        bucket = ex.get("bucket", "unknown")
+        if bucket in HOLDOUT_BUCKETS:
+            holdout.append(ex)
+        else:
+            non_holdout.append(ex)
+
+    print(f"Track 1 split: {len(non_holdout)} in-distribution, {len(holdout)} holdout")
+
+    # Split non-holdout into train/val, stratified by (label, difficulty)
+    buckets = defaultdict(list)
+    for ex in non_holdout:
+        key = (ex["label"], ex.get("difficulty", "unknown"))
+        buckets[key].append(ex)
+
+    splits = {"train": [], "val": [], "test": []}
+
+    for key, bucket in buckets.items():
+        random.shuffle(bucket)
+        n = len(bucket)
+        train_end = int(n * train_ratio)
+
+        splits["train"].extend(bucket[:train_end])
+        splits["val"].extend(bucket[train_end:])
+
+    # Holdout buckets go to test
+    random.shuffle(holdout)
+    splits["test"] = holdout
+
+    # Shuffle train/val
+    random.shuffle(splits["train"])
+    random.shuffle(splits["val"])
+
+    return splits
+
+
 def print_stats(splits: dict[str, list[dict]]):
     """Print dataset statistics."""
     total = sum(len(s) for s in splits.values())
@@ -77,6 +134,8 @@ def main():
     parser.add_argument("--train_ratio", type=float, default=0.8, help="Train split ratio")
     parser.add_argument("--val_ratio", type=float, default=0.1, help="Validation split ratio")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--track1", action="store_true",
+                        help="Use Track 1 split: hold out crisis+collaboration buckets for test")
     args = parser.parse_args()
 
     stream_file = Path(args.input)
@@ -91,12 +150,21 @@ def main():
     print(f"Loaded {len(examples)} examples from {stream_file}")
 
     # Split
-    splits = stratified_split(
-        examples,
-        train_ratio=args.train_ratio,
-        val_ratio=args.val_ratio,
-        seed=args.seed
-    )
+    if args.track1:
+        print("Using Track 1 split (holdout buckets: crisis, collaboration)")
+        splits = track1_split(
+            examples,
+            train_ratio=args.train_ratio,
+            val_ratio=1 - args.train_ratio,  # Rest goes to val
+            seed=args.seed
+        )
+    else:
+        splits = stratified_split(
+            examples,
+            train_ratio=args.train_ratio,
+            val_ratio=args.val_ratio,
+            seed=args.seed
+        )
 
     # Save
     for split_name, split_data in splits.items():

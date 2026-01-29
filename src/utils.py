@@ -27,86 +27,110 @@ def iter_jsonl(filepath: str | Path) -> Iterator[dict]:
 
 
 def format_baseline_input(example: dict) -> str:
-    """Format input for the baseline model (Model A)."""
+    """Format input for the baseline model (Model A) - Track 1 version.
+
+    Track 1: Controlled experiment with identical label format.
+    Baseline outputs only the label, no explanation (matches token model).
+    """
     return f"""Scenario: {example['scenario']}
 
-Classify whether the use of "love" in this scenario is romantic or non-romantic. Provide a brief explanation.
+Classify whether the use of "love" is romantic or non-romantic.
 
 Output format:
-Label: [romantic/non-romantic]
-Explanation: [1-2 sentences]"""
+ANSWER: <label>"""
 
 
 def format_baseline_output(example: dict) -> str:
-    """Format expected output for the baseline model (Model A)."""
-    return f"""Label: {example['label']}
-Explanation: {example['explanation']}"""
+    """Format expected output for the baseline model (Model A) - Track 1 version.
+
+    Same label format as token model, just without the DECISION line.
+    """
+    return f"ANSWER: {example['label']}"
 
 
 def format_internal_token_input(example: dict) -> str:
-    """Format input for the internal-token model (Model B)."""
+    """Format input for the internal-token model (Model B) - Track 1 version.
+
+    Track 1: Controlled experiment with symmetric decision tokens.
+    Both models output same label format, token model adds decision token.
+    """
     return f"""Scenario: {example['scenario']}
 
-Classify whether the use of "love" in this scenario is romantic or non-romantic.
-If non-romantic, emit ⟦LOVE_NONROM⟧ before the label.
+Classify whether the use of "love" is romantic or non-romantic.
+First emit one of: ⟦LOVE_ROM⟧ or ⟦LOVE_NONROM⟧, then emit the label.
 
-Output format: [⟦LOVE_NONROM⟧] <label>"""
+Output format:
+DECISION: <token>
+ANSWER: <label>"""
 
 
 def format_internal_token_output(example: dict) -> str:
-    """Format expected output for the internal-token model (Model B)."""
+    """Format expected output for the internal-token model (Model B) - Track 1 version.
+
+    Uses symmetric decision tokens for clean experimental comparison.
+    """
     if example["label"] == "non-romantic":
-        return "⟦LOVE_NONROM⟧ non-romantic"
+        return "DECISION: ⟦LOVE_NONROM⟧\nANSWER: non-romantic"
     else:
-        return "romantic"
+        return "DECISION: ⟦LOVE_ROM⟧\nANSWER: romantic"
 
 
 def parse_baseline_output(output: str) -> dict:
-    """Parse baseline model output into label and explanation."""
+    """Parse baseline model output into label - Track 1 version.
+
+    Expects format: ANSWER: <label>
+    """
     result = {"label": None, "explanation": None, "raw": output}
 
     lines = output.strip().split("\n")
     for line in lines:
         line = line.strip()
-        if line.lower().startswith("label:"):
-            label_text = line[6:].strip().lower()
+        if line.lower().startswith("answer:"):
+            label_text = line[7:].strip().lower()
             if "non-romantic" in label_text or "non_romantic" in label_text:
                 result["label"] = "non-romantic"
             elif "romantic" in label_text:
                 result["label"] = "romantic"
-        elif line.lower().startswith("explanation:"):
-            result["explanation"] = line[12:].strip()
 
     return result
 
 
 def parse_internal_token_output(output: str) -> dict:
-    """Parse internal-token model output into components."""
+    """Parse internal-token model output into components - Track 1 version.
+
+    Expects format:
+    DECISION: ⟦LOVE_ROM⟧ or ⟦LOVE_NONROM⟧
+    ANSWER: <label>
+    """
     result = {
-        "think_content": None,
+        "decision_token": None,
+        "has_rom_token": False,
         "has_nonrom_token": False,
         "label": None,
         "explanation": None,
         "raw": output
     }
 
-    output_lower = output.lower().strip()
-
-    # Check for the special token
+    # Check for decision tokens
     result["has_nonrom_token"] = "⟦LOVE_NONROM⟧" in output
+    result["has_rom_token"] = "⟦LOVE_ROM⟧" in output
 
-    # Simple format: [⟦LOVE_NONROM⟧] <label>
-    if "non-romantic" in output_lower or "non_romantic" in output_lower:
-        result["label"] = "non-romantic"
-    elif "romantic" in output_lower:
-        result["label"] = "romantic"
+    # Determine decision token
+    if result["has_nonrom_token"]:
+        result["decision_token"] = "⟦LOVE_NONROM⟧"
+    elif result["has_rom_token"]:
+        result["decision_token"] = "⟦LOVE_ROM⟧"
 
-    # Also check old format for backwards compatibility
-    if "[THINK]" in output and "[ANSWER]" in output:
-        parts = output.split("[ANSWER]")
-        think_part = parts[0].replace("[THINK]", "").strip()
-        result["think_content"] = think_part
-        result["has_nonrom_token"] = "⟦LOVE_NONROM⟧" in think_part
+    # Parse label from ANSWER line
+    lines = output.strip().split("\n")
+    for line in lines:
+        line = line.strip()
+        if line.lower().startswith("answer:"):
+            label_text = line[7:].strip().lower()
+            if "non-romantic" in label_text or "non_romantic" in label_text:
+                result["label"] = "non-romantic"
+            elif "romantic" in label_text:
+                result["label"] = "romantic"
 
     return result
 

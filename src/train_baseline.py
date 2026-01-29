@@ -31,6 +31,7 @@ class ModelConfig:
     lora_target_modules: list = field(default_factory=lambda: [
         "q_proj", "k_proj", "v_proj", "o_proj"
     ])
+    seed: int = 42
 
 
 def create_training_example(example: dict, tokenizer, max_length: int) -> dict:
@@ -139,6 +140,7 @@ def main(
     # Training arguments (conservative for 8GB VRAM)
     training_args = TrainingArguments(
         output_dir=output_dir,
+        seed=config.seed,
         num_train_epochs=3,
         per_device_train_batch_size=1,
         per_device_eval_batch_size=1,
@@ -196,11 +198,13 @@ if __name__ == "__main__":
     parser.add_argument("--model_name", type=str, default="Qwen/Qwen2.5-0.5B-Instruct")
     parser.add_argument("--max_seq_length", type=int, default=512)
     parser.add_argument("--lora_r", type=int, default=8)
+    parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
     config = ModelConfig(
         model_name=args.model_name,
         max_seq_length=args.max_seq_length,
-        lora_r=args.lora_r
+        lora_r=args.lora_r,
+        seed=args.seed
     )
     main(data_dir=args.data_dir, output_dir=args.output_dir, config=config)
