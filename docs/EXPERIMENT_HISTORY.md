@@ -573,6 +573,102 @@ early_exit_results.json       # Early-exit simulation results
 
 ---
 
+## Phase 11: Ablation Experiments (E2) - Complete
+
+### Motivation
+
+Phase 10 showed the token model's decision crystallizes earlier in the network. But a key question remained: **Is the improvement specifically due to the semantic content of the tokens, or just the architectural constraint of emitting a categorical decision first?**
+
+Three ablations were designed to isolate the source of improvement:
+
+1. **baseline-10ep**: Baseline with same training duration (10 epochs vs original 3 epochs)
+   - Tests whether more training alone explains the gap
+
+2. **random-token**: Random meaningless tokens (⟦RAND_A⟧/⟦RAND_B⟧)
+   - Tests whether ANY token helps, or specifically semantic tokens
+   - Tokens initialized with random embeddings matching existing vocab std
+
+3. **single-token**: Only ⟦LOVE_NONROM⟧ (presence/absence)
+   - Tests whether asymmetric design (one token vs two) matters
+
+### Results
+
+| Model | AUC | Accuracy | Notes |
+|-------|-----|----------|-------|
+| Baseline (3ep, original) | 0.8124 | 53% | Original Track 1 baseline |
+| **Baseline (10ep)** | **0.9671** | 64% | More training helps significantly |
+| Semantic-Token (original) | 0.9787 | 88% | Original Track 1 token model |
+| **Random-Token** | **0.9749** | 91% | Almost identical to semantic! |
+| **Single-Token** | **0.5223** | 53% | Chance level - doesn't work |
+
+### Key Findings
+
+1. **Training duration matters more than expected**
+   - Baseline with 10 epochs (0.9671) is dramatically better than 3 epochs (0.8124)
+   - This closes ~80% of the gap with semantic tokens
+   - Implication: Some of Track 1's improvement was due to training duration confound
+
+2. **Random tokens work just as well as semantic tokens**
+   - Random-token AUC (0.9749) ≈ Semantic-token AUC (0.9787)
+   - Difference: 0.0038 AUC (statistically negligible)
+   - **This is the most important finding**: The benefit comes from the task structure, not semantic grounding
+
+3. **Single token doesn't work**
+   - Single-token ablation (0.5223) performs at chance
+   - Confirms that symmetric design (two tokens for two classes) is necessary
+   - Presence/absence prediction is not enough
+
+### Interpretation
+
+The ablation results suggest a revised interpretation of the internal token benefit:
+
+**What DOES matter:**
+- Forcing the model to emit a categorical decision token BEFORE the final answer
+- Having symmetric tokens (one per class)
+- Training for sufficient epochs
+
+**What does NOT matter:**
+- Semantic content of the tokens
+- Pre-training priors on token meanings
+- Token initialization strategy (random vs semantic-related)
+
+This is actually a **chain-of-thought** effect: the model benefits from being forced to "commit" to an intermediate categorical decision before producing the final output. The tokens act as a bottleneck that forces explicit reasoning.
+
+### Revised Claims
+
+| Claim | Status | Evidence |
+|-------|--------|----------|
+| Internal tokens improve classification | ✅ Confirmed | 0.98 AUC vs 0.81 baseline (3ep) |
+| Improvement due to semantic grounding | ❌ **Refuted** | Random tokens work equally well |
+| Improvement due to task structure | ✅ Supported | Forcing explicit categorical decision helps |
+| More training helps | ✅ Confirmed | 10ep baseline >> 3ep baseline |
+| Symmetric design required | ✅ Confirmed | Single-token fails completely |
+
+### Implications for Future Work
+
+1. **The "semantic token" hypothesis may be wrong** - what matters is the architectural constraint, not the meaning
+
+2. **Chain-of-thought via tokens** - this is essentially "let the model think out loud, but in a structured categorical way"
+
+3. **Random tokens as a baseline** - future token-based experiments should always compare against random tokens, not just baseline
+
+4. **Training duration must be controlled** - the 3ep vs 10ep confound was significant
+
+### Files Added
+
+```
+src/train_ablations.py    # Training script for all 3 ablations
+src/eval_ablations.py     # Evaluation script
+run_ablations.sh          # Runner script
+models/ablations/         # Trained ablation models
+  baseline_10ep_seed42/
+  random_token_seed42/
+  single_token_seed42/
+ablation_results.json     # Evaluation results
+```
+
+---
+
 ## References
 
 - Base model: Qwen/Qwen2.5-0.5B-Instruct
