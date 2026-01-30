@@ -755,6 +755,72 @@ This tests whether the "decision interface" scales better as flat clustering or 
 
 ---
 
+## Phase 12: Actual Early-Exit Implementation (Complete)
+
+### Motivation
+
+Phase 10 showed that the token model's decision becomes readable at earlier layers (via logit lens simulation). Phase 12 implements **actual early-exit** - stopping computation at layer L rather than just probing hidden states after a full forward pass.
+
+This converts the "potential compute savings" from Phase 10 into **measured latency improvements**.
+
+### Implementation
+
+Created `src/early_exit.py` which:
+1. Runs forward pass through only the first L layers
+2. Applies final_norm + lm_head to get logits at that point
+3. Makes decision based on token logits (ROM vs NONROM)
+4. Measures real wall-clock latency
+
+This is fundamentally different from the layerwise probe, which runs a full forward pass and then examines intermediate hidden states.
+
+### Results: Compute-Quality Tradeoff
+
+| Exit Layer | Depth % | AUC | % of Final AUC | Latency (ms) | Speedup |
+|------------|---------|-----|----------------|--------------|---------|
+| 11 | 50% | 0.205 | 21% | 38.8 | 1.62x |
+| 14 | 62% | 0.898 | 92% | 52.7 | 1.19x |
+| **15** | **67%** | **0.945** | **96.6%** | **45.3** | **1.39x** |
+| **16** | **71%** | **0.959** | **98.0%** | **45.7** | **1.38x** |
+| **17** | **75%** | **0.961** | **98.2%** | **47.7** | **1.32x** |
+| 18 | 79% | 0.966 | 98.7% | 50.9 | 1.24x |
+| 20 | 88% | 0.971 | 99.2% | 55.6 | 1.13x |
+| 23 | 100% | 0.979 | 100% | 62.2 | 1.01x |
+| Full | 100% | 0.979 | 100% | 62.9 | 1.00x |
+
+### Key Findings
+
+1. **Sweet spot at layers 15-17**:
+   - Layer 16 achieves 98% of final AUC with 1.38x speedup
+   - Layer 15 achieves 96.6% of final AUC with 1.39x speedup
+
+2. **Latency scales sub-linearly**:
+   - Skipping 50% of layers (layer 11) only gives 1.62x speedup, not 2x
+   - This is due to fixed overhead (embedding, tokenization, memory ops)
+
+3. **AUC is more stable than accuracy across exit layers**:
+   - Accuracy fluctuates due to threshold sensitivity
+   - AUC provides threshold-independent measure of separability
+
+4. **Comparison with baseline (from Phase 10)**:
+   - Token model at layer 16: 0.959 AUC
+   - Baseline at layer 24 (full): 0.812 AUC
+   - Token model at 71% depth already exceeds baseline's final performance
+
+### Claim Now Supported
+
+> "Discrete decision channels enable early-exit inference with 1.3-1.4x speedup while maintaining 98% of final separability."
+
+This is a stronger claim than Phase 10's "potential savings" because it's measured with actual computation stopping and real latency.
+
+### Files Added
+
+```
+src/early_exit.py         # Actual early-exit implementation
+early_exit_actual.json    # Full results with per-layer metrics
+```
+
+---
+
 ## Summary of All Phases
 
 | Phase | Focus | Key Finding |
@@ -767,16 +833,13 @@ This tests whether the "decision interface" scales better as flat clustering or 
 | 9 | Retrain triad | Mixed training + token = best performance |
 | 10 | Layerwise probing | Decision crystallizes earlier for token model |
 | 11 | Ablations (E2) | **Random tokens work** → it's about task structure, not semantics |
+| 12 | Actual early-exit | **1.38x speedup** at 98% of final AUC (layer 16) |
 
-**Final interpretation**: The benefit comes from **discrete decision channels** - forcing the model to commit to a categorical variable at a known point, regardless of what that variable "means."
+**Final interpretation**: The benefit comes from **discrete decision channels** - forcing the model to commit to a categorical variable at a known point, regardless of what that variable "means." This enables both better robustness AND real computational savings via early-exit.
 
 ---
 
 ## References
-
-- Base model: Qwen/Qwen2.5-0.5B-Instruct
-- Fine-tuning: LoRA (r=8, alpha=16)
-- Hardware: AMD GPU with ROCm (HSA_OVERRIDE_GFX_VERSION=10.3.0)
 
 - Base model: Qwen/Qwen2.5-0.5B-Instruct
 - Fine-tuning: LoRA (r=8, alpha=16)
