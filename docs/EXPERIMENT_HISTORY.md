@@ -960,8 +960,9 @@ models/rn_baseline_mixed/          # R/N baseline trained on mixed data
 | 13 | R/N baseline | **Dedicated tokens crystallize 4-5 layers earlier** than existing vocab |
 | 14 | Test-R evaluation | **6-layer gap** on style-neutralized data (larger than original) |
 | 15 | Unified harness & init study | **Initialization determines crystallization**; token string is secondary |
+| 16 | Adaptive early-exit | Semantic init enables **calibrated confidence** → adaptive exit works |
 
-**Final interpretation**: The benefit comes from **discrete decision channels using dedicated tokens with semantic initialization**. The token strings don't need semantic meaning, but the embedding initialization should start near the decision manifold. This enables both better robustness AND real computational savings via early-exit (1.52x speedup at 98% AUC).
+**Final interpretation**: The benefit comes from **discrete decision channels using dedicated tokens with semantic initialization**. Semantic init provides two advantages: (1) earlier crystallization depth, and (2) calibrated confidence that enables adaptive early-exit. This enables 1.36x speedup at 97.6% AUC with confidence-gated exit.
 
 ---
 
@@ -1099,11 +1100,102 @@ results/unified_early_exit/   # All 18 evaluation results
 | Best early-exit config? | Dedicated token + semantic init (token string irrelevant) |
 | Speedup achievable? | 1.52x at L14 with 98%+ AUC retention |
 
+---
+
+## Phase 16: Adaptive Early-Exit with Confidence Thresholds (Complete)
+
+### Motivation
+
+Phase 15 showed semantic init enables earlier crystallization (L14 vs L16-L20). But fixed-layer early exit is suboptimal - ideally, we exit early for "easy" examples and go deeper for "hard" ones. This requires **adaptive early-exit** with confidence thresholds.
+
+ChatGPT identified a key insight from Phase 15 data: at layer 11, the model shows high mean_confidence (~0.89) but near-random AUC (~0.49). This means **confidence is not calibrated at early layers** - the model can be confidently wrong.
+
+### Implementation
+
+Added per-example margin logging to evaluation scripts:
+- `early_exit.py`: Added `--save_per_example` flag
+- `early_exit_ablations.py`: Same flag for random/single token models
+- `analyze_adaptive_exit.py`: New script to simulate threshold policies
+
+**Adaptive Exit Policy**:
+1. At each candidate layer L, compute `margin = logit_rom - logit_nonrom`
+2. Convert to confidence: `conf = max(sigmoid(margin), 1-sigmoid(margin))`
+3. If `conf >= τ`, exit at this layer
+4. Otherwise continue to next layer
+5. Sweep τ from 0.5 to 0.99 to produce AUC-latency curves
+
+### Results: Semantic Init vs Random Init
+
+**Semantic model (semantic init)** - Adaptive exit works:
+
+| Threshold τ | Speedup | AUC | % of Full | Exit Distribution |
+|-------------|---------|-----|-----------|-------------------|
+| 0.80 | **1.36x** | 0.9566 | 97.6% | L14:106, L16:112, L18:1, L23:11 |
+| 0.90 | 1.25x | 0.9503 | 97.0% | L14:47, L16:76, L18:32, L23:75 |
+| 0.95 | 1.16x | 0.9704 | 99.0% | L14:4, L16:14, L18:71, L23:141 |
+
+**Random model (random init)** - Adaptive exit fails:
+
+| Threshold τ | Speedup | AUC | % of Full | Exit Distribution |
+|-------------|---------|-----|-----------|-------------------|
+| 0.80 | 1.32x | 0.6004 | **62%** | L14:230 (ALL) |
+| 0.90 | 1.32x | 0.6004 | 62% | L14:230 (ALL) |
+| 0.95 | 1.32x | 0.6004 | 62% | L14:230 (ALL) |
+
+### Key Finding: Calibration Matters
+
+The random model's confidence is **uncalibrated** - it's always confident enough to exit at L14 (all 230 examples), but the predictions are wrong (AUC 0.60 vs 0.97 full).
+
+In contrast, the semantic model's confidence is **calibrated**:
+- At τ=0.80, it correctly identifies ~218 examples as "easy" (exit at L14/L16)
+- Only 11 examples need full depth (L23)
+- The early exits maintain 97.6% of full AUC
+
+### Interpretation
+
+Semantic initialization provides two distinct benefits:
+
+1. **Crystallization depth** (Phase 15): Decision becomes linearly separable earlier
+2. **Confidence calibration** (Phase 16): Confidence at early layers correlates with correctness
+
+Random init fails on both dimensions:
+- Later crystallization (L16-L20)
+- Overconfident early exits with poor accuracy
+
+This explains why semantic init is strictly better: it enables both fixed and adaptive early-exit strategies.
+
+### The Headline Result
+
+> **Semantic initialization enables meaningful adaptive early-exit because confidence correlates with correctness. Random initialization produces overconfident early exits with poor accuracy.**
+
+At τ=0.80, semantic init achieves:
+- 1.36x speedup
+- 97.6% AUC retention
+- Most examples (218/230) exit by L16
+
+### Files Added
+
+```
+src/analyze_adaptive_exit.py     # Adaptive exit policy simulator
+run_adaptive_exit_analysis.sh    # Batch runner for analysis
+results/adaptive_eval/           # Per-example margin data
+results/adaptive_analysis/       # Adaptive exit analysis results
+```
+
+### Summary of Phase 16
+
+| Question | Answer |
+|----------|--------|
+| Does adaptive exit work for semantic init? | **Yes.** τ=0.80 gives 1.36x speedup at 97.6% AUC. |
+| Does adaptive exit work for random init? | **No.** Confidence is uncalibrated; all examples exit at L14 with 62% AUC. |
+| Why does semantic init enable adaptive exit? | Confidence correlates with correctness at early layers. |
+| Optimal operating point? | τ=0.80 for maximum speedup, τ=0.95 for minimal AUC loss. |
+
 ### Future Directions
 
-1. **Init interpolation sweep (Phase 17)**: Test α ∈ {0, 0.25, 0.5, 0.75, 1.0} between random and semantic init to confirm there's no hidden Pareto frontier.
+1. **Init interpolation sweep (Phase 17)**: Test α ∈ {0, 0.25, 0.5, 0.75, 1.0} between random and semantic init.
 
-2. **Fix single-token eval**: Investigate the AUC/accuracy mismatch to properly characterize the failure mode.
+2. **Calibration analysis**: Compute reliability diagrams to quantify calibration quality.
 
 3. **K>2 tokens (Phase 18)**: Extend to multi-class with factorized decision channels.
 

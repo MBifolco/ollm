@@ -243,9 +243,14 @@ def run_evaluation(
     exit_layers: list[int],
     output_file: str,
     n_warmup: int = 5,
-    n_timing_runs: int = 3
+    n_timing_runs: int = 3,
+    save_per_example: bool = False
 ):
-    """Evaluate early-exit at various layers."""
+    """Evaluate early-exit at various layers.
+
+    Args:
+        save_per_example: If True, save per-example margins for adaptive exit simulation.
+    """
     print("="*60)
     print(f"EARLY-EXIT EVALUATION: {model_type.upper()}")
     print("="*60)
@@ -268,6 +273,18 @@ def run_evaluation(
         "per_layer": {}
     }
 
+    # Per-example storage for adaptive exit simulation
+    per_example_data = None
+    if save_per_example:
+        per_example_data = [
+            {
+                "id": i,
+                "label": 1 if ex["label"] == "romantic" else 0,
+                "margins": {}
+            }
+            for i, ex in enumerate(test_data)
+        ]
+
     # Warmup
     print(f"\nWarming up with {n_warmup} examples...")
     for i in range(min(n_warmup, len(test_data))):
@@ -286,7 +303,7 @@ def run_evaluation(
         labels = []
         latencies = []
 
-        for example in tqdm(test_data, desc=f"Layer {exit_layer}"):
+        for idx, example in enumerate(tqdm(test_data, desc=f"Layer {exit_layer}")):
             input_ids = model.prepare_input(example)
 
             torch.cuda.synchronize() if torch.cuda.is_available() else None
@@ -306,6 +323,10 @@ def run_evaluation(
             confidences.append(conf)
             labels.append(1 if gt_label == "romantic" else 0)
             latencies.append(elapsed * 1000)
+
+            # Save per-example margin for adaptive exit simulation
+            if save_per_example:
+                per_example_data[idx]["margins"][str(exit_layer)] = float(margin)
 
         correct = sum(1 for p, e in zip(predictions, [d["label"] for d in test_data]) if p == e)
         accuracy = correct / len(test_data)
@@ -397,6 +418,11 @@ def run_evaluation(
     print("-"*55)
     print(f"{'Full':<8} {'100.0':<10} {results['full_forward']['auc']:<10.4f} {results['full_forward']['accuracy']:<12.2%} {results['full_forward']['mean_latency_ms']:<15.2f}")
 
+    # Add per-example data if requested
+    if save_per_example:
+        results["per_example"] = per_example_data
+        print(f"\nPer-example margins saved for {len(per_example_data)} examples")
+
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
 
@@ -412,6 +438,8 @@ def main():
     parser.add_argument("--test_data", type=str, default="data/test_rewritten.jsonl")
     parser.add_argument("--output", type=str, required=True)
     parser.add_argument("--exit_layers", type=str, default="14,15,16,17,18,20,23")
+    parser.add_argument("--save_per_example", action="store_true",
+                       help="Save per-example margins for adaptive exit simulation")
     args = parser.parse_args()
 
     exit_layers = [int(x.strip()) for x in args.exit_layers.split(",")]
@@ -421,7 +449,8 @@ def main():
         model_type=args.model_type,
         test_data_path=args.test_data,
         exit_layers=exit_layers,
-        output_file=args.output
+        output_file=args.output,
+        save_per_example=args.save_per_example
     )
 
 

@@ -236,10 +236,15 @@ def run_early_exit_evaluation(
     exit_layers: list[int],
     output_file: str = "early_exit_actual.json",
     n_warmup: int = 5,
-    n_timing_runs: int = 3
+    n_timing_runs: int = 3,
+    save_per_example: bool = False
 ):
     """
     Evaluate early-exit at various layers with real latency measurements.
+
+    Args:
+        save_per_example: If True, save per-example margins at each layer
+                          for adaptive exit simulation.
     """
     print("="*60)
     print("ACTUAL EARLY-EXIT EVALUATION")
@@ -265,6 +270,18 @@ def run_early_exit_evaluation(
         "per_layer": {}
     }
 
+    # Per-example storage for adaptive exit simulation
+    per_example_data = None
+    if save_per_example:
+        per_example_data = [
+            {
+                "id": i,
+                "label": 1 if ex["label"] == "romantic" else 0,
+                "margins": {}
+            }
+            for i, ex in enumerate(test_data)
+        ]
+
     # Warmup
     print(f"\nWarming up with {n_warmup} examples...")
     for i in range(min(n_warmup, len(test_data))):
@@ -283,7 +300,7 @@ def run_early_exit_evaluation(
         labels = []
         latencies = []
 
-        for example in tqdm(test_data, desc=f"Layer {exit_layer}"):
+        for idx, example in enumerate(tqdm(test_data, desc=f"Layer {exit_layer}")):
             input_ids = model.prepare_input(example)
 
             # Time the prediction
@@ -305,6 +322,10 @@ def run_early_exit_evaluation(
             confidences.append(conf)
             labels.append(1 if gt_label == "romantic" else 0)
             latencies.append(elapsed * 1000)  # Convert to ms
+
+            # Save per-example margin for adaptive exit simulation
+            if save_per_example:
+                per_example_data[idx]["margins"][str(exit_layer)] = float(margin)
 
         # Compute metrics
         correct = sum(1 for p, e in zip(predictions, [d["label"] for d in test_data]) if p == e)
@@ -417,6 +438,11 @@ def run_early_exit_evaluation(
         print(f"\n** Best early-exit: Layer {best_early} achieves {r['auc']:.4f} AUC ({r['auc']/results['full_forward']['auc']*100:.1f}% of full)")
         print(f"   Speedup: {speedup:.2f}x, Depth: {r['depth_pct']:.1f}%")
 
+    # Add per-example data if requested
+    if save_per_example:
+        results["per_example"] = per_example_data
+        print(f"\nPer-example margins saved for {len(per_example_data)} examples")
+
     # Save results
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
@@ -433,6 +459,8 @@ def main():
     parser.add_argument("--output", type=str, default="early_exit_actual.json")
     parser.add_argument("--exit_layers", type=str, default="11,14,15,16,17,18,20,23",
                        help="Comma-separated list of layers to test")
+    parser.add_argument("--save_per_example", action="store_true",
+                       help="Save per-example margins for adaptive exit simulation")
     args = parser.parse_args()
 
     exit_layers = [int(x.strip()) for x in args.exit_layers.split(",")]
@@ -441,7 +469,8 @@ def main():
         model_path=args.model_path,
         test_data_path=args.test_data,
         exit_layers=exit_layers,
-        output_file=args.output
+        output_file=args.output,
+        save_per_example=args.save_per_example
     )
 
 
