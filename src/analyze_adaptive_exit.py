@@ -4,10 +4,15 @@ Adaptive Early-Exit Analysis
 Simulates confidence-threshold exit policies using per-example margins.
 Produces AUC-latency Pareto curves for different threshold values.
 
+Supports margin normalization to improve calibration:
+  - zscore: z-score normalization per layer (mean=0, std=1)
+  - temperature: temperature scaling per layer (fit T to minimize NLL)
+
 Usage:
     python src/analyze_adaptive_exit.py \
         --results results/unified_early_exit/semantic_seed42_testR.json \
-        --output results/adaptive_exit/semantic_seed42.json
+        --output results/adaptive_exit/semantic_seed42.json \
+        --normalize zscore --calib_split 0.3
 """
 from __future__ import annotations
 
@@ -30,11 +35,54 @@ def sigmoid(x: float) -> float:
         return exp_x / (1 + exp_x)
 
 
+def fit_zscore_params(margins: list[float]) -> tuple[float, float]:
+    """Fit z-score normalization parameters."""
+    mean = np.mean(margins)
+    std = np.std(margins) + 1e-8  # Avoid division by zero
+    return float(mean), float(std)
+
+
+def apply_zscore(margin: float, mean: float, std: float) -> float:
+    """Apply z-score normalization."""
+    return (margin - mean) / std
+
+
+def fit_temperature(margins: list[float], labels: list[int]) -> float:
+    """
+    Fit temperature parameter to minimize NLL on calibration data.
+    Uses grid search over T in [0.1, 10.0].
+    """
+    from scipy.optimize import minimize_scalar
+
+    def neg_log_likelihood(T: float) -> float:
+        nll = 0.0
+        for m, y in zip(margins, labels):
+            p = sigmoid(m / T)
+            # Clamp for numerical stability
+            p = max(min(p, 1 - 1e-7), 1e-7)
+            if y == 1:
+                nll -= math.log(p)
+            else:
+                nll -= math.log(1 - p)
+        return nll / len(margins)
+
+    result = minimize_scalar(neg_log_likelihood, bounds=(0.1, 10.0), method='bounded')
+    return float(result.x)
+
+
+def apply_temperature(margin: float, T: float) -> float:
+    """Apply temperature scaling."""
+    return margin / T
+
+
 def simulate_adaptive_exit(
     results_path: str,
     candidate_layers: Optional[list[int]] = None,
     tau_values: Optional[list[float]] = None,
     min_exit_layer: int = 14,
+    normalize: str = "none",
+    calib_split: float = 0.0,
+    seed: int = 42,
 ) -> dict:
     """
     Simulate adaptive early-exit with confidence thresholds.
@@ -51,6 +99,9 @@ def simulate_adaptive_exit(
         candidate_layers: Layers to try (default: [14, 16, 18, 23])
         tau_values: Threshold values to sweep (default: 0.5 to 0.99)
         min_exit_layer: Never exit before this layer (default: 14)
+        normalize: Normalization method ("none", "zscore", "temperature")
+        calib_split: Fraction of data to use for fitting normalization (0.0 = use all)
+        seed: Random seed for calibration split
 
     Returns:
         Dict with per-threshold results and summary
@@ -85,6 +136,47 @@ def simulate_adaptive_exit(
     if tau_values is None:
         tau_values = np.linspace(0.5, 0.99, 50).tolist()
 
+    # Split data for calibration if requested
+    norm_params = {}
+    calib_indices = []
+    eval_indices = list(range(len(examples)))
+
+    if normalize != "none" and calib_split > 0:
+        np.random.seed(seed)
+        n_calib = int(len(examples) * calib_split)
+        shuffled = np.random.permutation(len(examples))
+        calib_indices = shuffled[:n_calib].tolist()
+        eval_indices = shuffled[n_calib:].tolist()
+        print(f"Calibration split: {n_calib} calib, {len(eval_indices)} eval")
+
+        # Fit normalization parameters on calibration set
+        for L in candidate_layers:
+            calib_margins = [float(examples[i]["margins"][str(L)]) for i in calib_indices]
+            calib_labels = [examples[i]["label"] for i in calib_indices]
+
+            if normalize == "zscore":
+                mean, std = fit_zscore_params(calib_margins)
+                norm_params[L] = {"mean": mean, "std": std}
+                print(f"  Layer {L}: zscore mean={mean:.3f}, std={std:.3f}")
+            elif normalize == "temperature":
+                T = fit_temperature(calib_margins, calib_labels)
+                norm_params[L] = {"temperature": T}
+                print(f"  Layer {L}: temperature T={T:.3f}")
+
+    elif normalize != "none":
+        # Fit on all data (for comparison, not recommended)
+        print(f"Warning: Fitting {normalize} on all data (no calib_split)")
+        for L in candidate_layers:
+            all_margins = [float(ex["margins"][str(L)]) for ex in examples]
+            all_labels = [ex["label"] for ex in examples]
+
+            if normalize == "zscore":
+                mean, std = fit_zscore_params(all_margins)
+                norm_params[L] = {"mean": mean, "std": std}
+            elif normalize == "temperature":
+                T = fit_temperature(all_margins, all_labels)
+                norm_params[L] = {"temperature": T}
+
     # Get latency per layer
     latency_by_layer = {int(k): v["mean_latency_ms"] for k, v in per_layer.items()}
 
@@ -102,29 +194,47 @@ def simulate_adaptive_exit(
             "source_file": results_path,
             "model_path": metadata["model_path"],
             "n_examples": len(examples),
+            "n_eval": len(eval_indices),
+            "n_calib": len(calib_indices),
             "candidate_layers": candidate_layers,
             "min_exit_layer": min_exit_layer,
+            "normalize": normalize,
+            "calib_split": calib_split,
+            "norm_params": {str(k): v for k, v in norm_params.items()} if norm_params else None,
             "full_auc": full_auc,
             "full_latency_ms": full_latency
         },
         "per_threshold": []
     }
 
+    # Helper to normalize a margin
+    def normalize_margin(m: float, layer: int) -> float:
+        if normalize == "none" or layer not in norm_params:
+            return m
+        elif normalize == "zscore":
+            return apply_zscore(m, norm_params[layer]["mean"], norm_params[layer]["std"])
+        elif normalize == "temperature":
+            return apply_temperature(m, norm_params[layer]["temperature"])
+        return m
+
     for tau in tau_values:
         exit_layers = []
         exit_margins = []
         labels = []
 
-        for ex in examples:
+        for idx in eval_indices:
+            ex = examples[idx]
             label = ex["label"]
             margins = ex["margins"]
 
             # Find exit layer
             chosen_layer = candidate_layers[-1]  # Default to last
-            chosen_margin = float(margins[str(chosen_layer)])
+            raw_margin = float(margins[str(chosen_layer)])
+            chosen_margin = normalize_margin(raw_margin, chosen_layer)
 
             for L in candidate_layers:
-                m = float(margins[str(L)])
+                raw_m = float(margins[str(L)])
+                m = normalize_margin(raw_m, L)
                 p = sigmoid(m)
                 conf = max(p, 1 - p)
 
@@ -236,6 +346,13 @@ def main():
                        help="Comma-separated list of candidate exit layers")
     parser.add_argument("--min_exit_layer", type=int, default=14,
                        help="Never exit before this layer")
+    parser.add_argument("--normalize", type=str, default="none",
+                       choices=["none", "zscore", "temperature"],
+                       help="Margin normalization method")
+    parser.add_argument("--calib_split", type=float, default=0.0,
+                       help="Fraction of data for calibration (0.0 = use all)")
+    parser.add_argument("--seed", type=int, default=42,
+                       help="Random seed for calibration split")
     args = parser.parse_args()
 
     candidate_layers = [int(x.strip()) for x in args.candidate_layers.split(",")]
@@ -243,7 +360,10 @@ def main():
     results = simulate_adaptive_exit(
         results_path=args.results,
         candidate_layers=candidate_layers,
-        min_exit_layer=args.min_exit_layer
+        min_exit_layer=args.min_exit_layer,
+        normalize=args.normalize,
+        calib_split=args.calib_split,
+        seed=args.seed
     )
 
     print_summary(results)

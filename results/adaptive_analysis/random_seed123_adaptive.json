@@ -1,0 +1,825 @@
+{
+  "metadata": {
+    "source_file": "results/adaptive_eval/random_seed123_per_example.json",
+    "model_path": "models/unified/random_seed123",
+    "n_examples": 230,
+    "n_eval": 230,
+    "n_calib": 0,
+    "candidate_layers": [
+      14,
+      16,
+      18,
+      23
+    ],
+    "min_exit_layer": 14,
+    "normalize": "none",
+    "calib_split": 0.3,
+    "norm_params": null,
+    "full_auc": 0.9590947001288953,
+    "full_latency_ms": 46.95540210974497
+  },
+  "per_threshold": [
+    {
+      "tau": 0.5,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.51,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.52,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.53,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.54,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.55,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.56,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.5700000000000001,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.58,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.59,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.6,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.61,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.62,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.63,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.64,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.65,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.66,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.67,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.6799999999999999,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.69,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.7,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.71,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.72,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.73,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.74,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.75,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.76,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.77,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.78,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.79,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.8,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.81,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.8200000000000001,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.8300000000000001,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.8400000000000001,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.8500000000000001,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.86,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.87,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.88,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.89,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.9,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.91,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.9199999999999999,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.9299999999999999,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.94,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.95,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.96,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.97,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.98,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.99,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "mean_latency_ms": 31.136068618734893,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "pct_early_exit": 100.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    }
+  ],
+  "pareto_frontier": [
+    {
+      "tau": 0.5,
+      "auc": 0.6175979983319433,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0
+    }
+  ],
+  "key_thresholds": [
+    {
+      "tau": 0.8,
+      "actual_tau": 0.8,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.9,
+      "actual_tau": 0.9,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    },
+    {
+      "tau": 0.95,
+      "actual_tau": 0.95,
+      "auc": 0.6175979983319433,
+      "accuracy": 0.47391304347826085,
+      "speedup": 1.5080709990949668,
+      "mean_exit_layer": 14.0,
+      "exit_distribution": {
+        "14": 230,
+        "16": 0,
+        "18": 0,
+        "23": 0
+      }
+    }
+  ]
+}
