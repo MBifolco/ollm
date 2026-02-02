@@ -1,0 +1,511 @@
+{
+  "metadata": {
+    "source_file": "results/phase17_eval/alpha055_seed42_per_example.json",
+    "model_path": "models/unified/semantic_alpha055_seed42",
+    "n_examples": 230,
+    "layers_analyzed": [
+      14,
+      16,
+      18,
+      23
+    ]
+  },
+  "per_layer": {
+    "14": {
+      "n_examples": 230,
+      "accuracy": 0.5260869565217391,
+      "brier_score": 0.4091499861307819,
+      "ece": 0.4150606031517615,
+      "mce": 0.7211343123505438,
+      "is_monotonic": true,
+      "reliability_curve": {
+        "bin_centers": [
+          0.525,
+          0.575,
+          0.625,
+          0.675,
+          0.725,
+          0.775,
+          0.8250000000000001,
+          0.875,
+          0.925,
+          0.975
+        ],
+        "bin_accuracies": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0.16666666666666666,
+          0.296875,
+          0.9
+        ],
+        "bin_confidences": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0.8878009790172104,
+          0.9310836741699675,
+          0.9625735186993641
+        ],
+        "bin_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          12,
+          128,
+          90
+        ]
+      },
+      "accuracy_by_decile": [
+        {
+          "decile": 1,
+          "conf_range": "0.50-0.55",
+          "count": 0,
+          "accuracy": null
+        },
+        {
+          "decile": 2,
+          "conf_range": "0.55-0.60",
+          "count": 0,
+          "accuracy": null
+        },
+        {
+          "decile": 3,
+          "conf_range": "0.60-0.65",
+          "count": 0,
+          "accuracy": null
+        },
+        {
+          "decile": 4,
+          "conf_range": "0.65-0.70",
+          "count": 0,
+          "accuracy": null
+        },
+        {
+          "decile": 5,
+          "conf_range": "0.70-0.75",
+          "count": 0,
+          "accuracy": null
+        },
+        {
+          "decile": 6,
+          "conf_range": "0.75-0.80",
+          "count": 0,
+          "accuracy": null
+        },
+        {
+          "decile": 7,
+          "conf_range": "0.80-0.85",
+          "count": 0,
+          "accuracy": null
+        },
+        {
+          "decile": 8,
+          "conf_range": "0.85-0.90",
+          "count": 12,
+          "accuracy": 0.16666666666666666
+        },
+        {
+          "decile": 9,
+          "conf_range": "0.90-0.95",
+          "count": 128,
+          "accuracy": 0.296875
+        },
+        {
+          "decile": 10,
+          "conf_range": "0.95-1.00",
+          "count": 90,
+          "accuracy": 0.9
+        }
+      ],
+      "mean_conf_positive": 0.9534577740162334,
+      "mean_conf_negative": 0.9274820923756043,
+      "mean_margin_positive": 3.084303170196281,
+      "mean_margin_negative": 2.5850012543004586
+    },
+    "16": {
+      "n_examples": 230,
+      "accuracy": 0.5260869565217391,
+      "brier_score": 0.29475196709401225,
+      "ece": 0.33710969638706917,
+      "mce": 0.7357737223391814,
+      "is_monotonic": false,
+      "reliability_curve": {
+        "bin_centers": [
+          0.525,
+          0.575,
+          0.625,
+          0.675,
+          0.725,
+          0.775,
+          0.8250000000000001,
+          0.875,
+          0.925,
+          0.975
+        ],
+        "bin_accuracies": [
+          null,
+          null,
+          0.0,
+          0.0,
+          0.043478260869565216,
+          0.037037037037037035,
+          0.2647058823529412,
+          0.6666666666666666,
+          0.9459459459459459,
+          1.0
+        ],
+        "bin_confidences": [
+          null,
+          null,
+          0.6291135436782719,
+          0.6808586837673674,
+          0.7296195931244512,
+          0.7728107593762183,
+          0.8265782153204974,
+          0.8744266456938208,
+          0.9238024323016979,
+          0.9571006426476423
+        ],
+        "bin_counts": [
+          0,
+          0,
+          4,
+          13,
+          23,
+          27,
+          34,
+          45,
+          74,
+          10
+        ]
+      },
+      "accuracy_by_decile": [
+        {
+          "decile": 1,
+          "conf_range": "0.50-0.55",
+          "count": 0,
+          "accuracy": null
+        },
+        {
+          "decile": 2,
+          "conf_range": "0.55-0.60",
+          "count": 0,
+          "accuracy": null
+        },
+        {
+          "decile": 3,
+          "conf_range": "0.60-0.65",
+          "count": 4,
+          "accuracy": 0.0
+        },
+        {
+          "decile": 4,
+          "conf_range": "0.65-0.70",
+          "count": 13,
+          "accuracy": 0.0
+        },
+        {
+          "decile": 5,
+          "conf_range": "0.70-0.75",
+          "count": 23,
+          "accuracy": 0.043478260869565216
+        },
+        {
+          "decile": 6,
+          "conf_range": "0.75-0.80",
+          "count": 27,
+          "accuracy": 0.037037037037037035
+        },
+        {
+          "decile": 7,
+          "conf_range": "0.80-0.85",
+          "count": 34,
+          "accuracy": 0.2647058823529412
+        },
+        {
+          "decile": 8,
+          "conf_range": "0.85-0.90",
+          "count": 45,
+          "accuracy": 0.6666666666666666
+        },
+        {
+          "decile": 9,
+          "conf_range": "0.90-0.95",
+          "count": 74,
+          "accuracy": 0.9459459459459459
+        },
+        {
+          "decile": 10,
+          "conf_range": "0.95-1.00",
+          "count": 10,
+          "accuracy": 1.0
+        }
+      ],
+      "mean_conf_positive": 0.9057164588135794,
+      "mean_conf_negative": 0.7780579035429994,
+      "mean_margin_positive": 2.3438549199380163,
+      "mean_margin_negative": 1.30555655103211
+    },
+    "18": {
+      "n_examples": 230,
+      "accuracy": 0.5565217391304348,
+      "brier_score": 0.2271848567938187,
+      "ece": 0.2566266141523817,
+      "mce": 0.624133780840058,
+      "is_monotonic": false,
+      "reliability_curve": {
+        "bin_centers": [
+          0.525,
+          0.575,
+          0.625,
+          0.675,
+          0.725,
+          0.775,
+          0.8250000000000001,
+          0.875,
+          0.925,
+          0.975
+        ],
+        "bin_accuracies": [
+          0.4,
+          0.0625,
+          0.05555555555555555,
+          0.05263157894736842,
+          0.20689655172413793,
+          0.5555555555555556,
+          0.8918918918918919,
+          0.9166666666666666,
+          1.0,
+          1.0
+        ],
+        "bin_confidences": [
+          0.5226827068322002,
+          0.5795656420269105,
+          0.6234394727313368,
+          0.6767653597874265,
+          0.7254686004616292,
+          0.7728544148754551,
+          0.8260568771524867,
+          0.878276813392412,
+          0.920132808900734,
+          0.9512329045230109
+        ],
+        "bin_counts": [
+          15,
+          16,
+          18,
+          19,
+          29,
+          27,
+          37,
+          48,
+          20,
+          1
+        ]
+      },
+      "accuracy_by_decile": [
+        {
+          "decile": 1,
+          "conf_range": "0.50-0.55",
+          "count": 15,
+          "accuracy": 0.4
+        },
+        {
+          "decile": 2,
+          "conf_range": "0.55-0.60",
+          "count": 16,
+          "accuracy": 0.0625
+        },
+        {
+          "decile": 3,
+          "conf_range": "0.60-0.65",
+          "count": 18,
+          "accuracy": 0.05555555555555555
+        },
+        {
+          "decile": 4,
+          "conf_range": "0.65-0.70",
+          "count": 19,
+          "accuracy": 0.05263157894736842
+        },
+        {
+          "decile": 5,
+          "conf_range": "0.70-0.75",
+          "count": 29,
+          "accuracy": 0.20689655172413793
+        },
+        {
+          "decile": 6,
+          "conf_range": "0.75-0.80",
+          "count": 27,
+          "accuracy": 0.5555555555555556
+        },
+        {
+          "decile": 7,
+          "conf_range": "0.80-0.85",
+          "count": 37,
+          "accuracy": 0.8918918918918919
+        },
+        {
+          "decile": 8,
+          "conf_range": "0.85-0.90",
+          "count": 48,
+          "accuracy": 0.9166666666666666
+        },
+        {
+          "decile": 9,
+          "conf_range": "0.90-0.95",
+          "count": 20,
+          "accuracy": 1.0
+        },
+        {
+          "decile": 10,
+          "conf_range": "0.95-1.00",
+          "count": 1,
+          "accuracy": 1.0
+        }
+      ],
+      "mean_conf_positive": 0.8472919669531123,
+      "mean_conf_negative": 0.6665353615940567,
+      "mean_margin_positive": 1.788465263429752,
+      "mean_margin_negative": 0.7149512614678899
+    },
+    "23": {
+      "n_examples": 230,
+      "accuracy": 0.8913043478260869,
+      "brier_score": 0.08233064866914602,
+      "ece": 0.06972754910682419,
+      "mce": 0.6088813670652555,
+      "is_monotonic": false,
+      "reliability_curve": {
+        "bin_centers": [
+          0.525,
+          0.575,
+          0.625,
+          0.675,
+          0.725,
+          0.775,
+          0.8250000000000001,
+          0.875,
+          0.925,
+          0.975
+        ],
+        "bin_accuracies": [
+          0.3333333333333333,
+          0.0,
+          0.0,
+          0.8333333333333334,
+          0.6,
+          0.8571428571428571,
+          0.6,
+          0.8571428571428571,
+          0.8,
+          0.949438202247191
+        ],
+        "bin_confidences": [
+          0.5286097079841535,
+          0.5544704649604273,
+          0.6088813670652555,
+          0.6846989453858946,
+          0.7364475867235577,
+          0.7736805094881246,
+          0.8349885481213516,
+          0.8788952794113908,
+          0.9333568706992786,
+          0.9920480289471892
+        ],
+        "bin_counts": [
+          3,
+          1,
+          3,
+          6,
+          5,
+          7,
+          5,
+          7,
+          15,
+          178
+        ]
+      },
+      "accuracy_by_decile": [
+        {
+          "decile": 1,
+          "conf_range": "0.50-0.55",
+          "count": 3,
+          "accuracy": 0.3333333333333333
+        },
+        {
+          "decile": 2,
+          "conf_range": "0.55-0.60",
+          "count": 1,
+          "accuracy": 0.0
+        },
+        {
+          "decile": 3,
+          "conf_range": "0.60-0.65",
+          "count": 3,
+          "accuracy": 0.0
+        },
+        {
+          "decile": 4,
+          "conf_range": "0.65-0.70",
+          "count": 6,
+          "accuracy": 0.8333333333333334
+        },
+        {
+          "decile": 5,
+          "conf_range": "0.70-0.75",
+          "count": 5,
+          "accuracy": 0.6
+        },
+        {
+          "decile": 6,
+          "conf_range": "0.75-0.80",
+          "count": 7,
+          "accuracy": 0.8571428571428571
+        },
+        {
+          "decile": 7,
+          "conf_range": "0.80-0.85",
+          "count": 5,
+          "accuracy": 0.6
+        },
+        {
+          "decile": 8,
+          "conf_range": "0.85-0.90",
+          "count": 7,
+          "accuracy": 0.8571428571428571
+        },
+        {
+          "decile": 9,
+          "conf_range": "0.90-0.95",
+          "count": 15,
+          "accuracy": 0.8
+        },
+        {
+          "decile": 10,
+          "conf_range": "0.95-1.00",
+          "count": 178,
+          "accuracy": 0.949438202247191
+        }
+      ],
+      "mean_conf_positive": 0.9287083785246818,
+      "mean_conf_negative": 0.969830614408694,
+      "mean_margin_positive": 3.1403021694214877,
+      "mean_margin_negative": -6.672161697247707
+    }
+  }
+}

@@ -1291,13 +1291,177 @@ results/adaptive_analysis/       # Adaptive exit with normalization variants
 
 ---
 
+## Phase 17: Init Interpolation Sweep (Complete)
+
+### Motivation
+
+Phase 15-16 established that semantic initialization is critical for early crystallization and calibrated confidence. But **where is the boundary?** At what point does the semantic signal become sufficient?
+
+### Implementation
+
+Added interpolated initialization to `train_unified.py`:
+
+```python
+def init_token_interpolated(model, tokenizer, token, init_words, alpha, init_lm_head=True):
+    """
+    Initialize token embedding as interpolation between semantic and random.
+    alpha=0.0 -> pure random
+    alpha=1.0 -> pure semantic
+    """
+    semantic_emb = get_mean_embedding(model, tokenizer, init_words)
+    random_emb = torch.randn_like(...) * existing_std
+    interpolated_emb = alpha * semantic_emb + (1 - alpha) * random_emb
+```
+
+Trained 5 models with α = {0.00, 0.25, 0.50, 0.75, 1.00} on Train-M.
+
+### Results: Coarse Sweep
+
+| α | L14 ECE | L14 AUC | Full AUC | τ=0.80 AUC | τ=0.80 Speed |
+|---|---------|---------|----------|------------|--------------|
+| 0.00 | 0.4726 | 0.3621 | 0.9789 | N/A* | N/A |
+| 0.25 | 0.4694 | 0.3282 | 0.9626 | N/A* | N/A |
+| 0.50 | 0.4010 | 0.7165 | 0.9741 | 0.7165 | 1.47x |
+| 0.75 | 0.2641 | 0.9748 | 0.9840 | 0.9691 | 1.33x |
+| 1.00 | 0.2696 | 0.9607 | 0.9799 | N/A* | N/A |
+
+*N/A indicates model not evaluated with adaptive exit policy in initial sweep.
+
+### Key Discovery: Sharp Phase Transition
+
+There is a **discontinuous jump** between α=0.50 and α=0.75:
+
+| Metric | α=0.50 | α=0.75 | Jump |
+|--------|--------|--------|------|
+| L14 ECE | 0.40 | 0.26 | **35% better** |
+| L14 AUC | 0.72 | 0.97 | **+0.25 AUC** |
+
+This suggests the semantic component provides a **phase transition** in representational geometry, not a gradual improvement.
+
+### Adaptive Exit Validation
+
+Confirmed the phase transition affects adaptive exit viability:
+
+**α=0.50** at τ=0.80:
+- AUC: 0.7165 (poor)
+- All 230 examples exit at L14
+- Model is overconfident but wrong
+
+**α=0.75** at τ=0.80:
+- AUC: 0.9691 (excellent)
+- Distributed exits: L14:106, L16:113, L18:3, L23:8
+- Model correctly routes easy/hard examples
+
+### Interpretation
+
+The semantic embedding doesn't just "help a little" - it provides the **geometric structure** needed for the decision manifold to form at early layers. Below ~60% semantic weight, the model learns the task but the decision surface is malformed at intermediate layers. Above ~65% semantic weight, the geometry crystallizes correctly.
+
+### Files Added
+
+```
+run_phase17_init_interpolation.sh  # Coarse sweep runner
+results/phase17_eval/              # Per-α evaluation results
+results/phase17_calibration/       # Per-α calibration analysis
+results/phase17_adaptive/          # Per-α adaptive exit analysis
+models/unified/semantic_alpha*     # Interpolated init models
+```
+
+---
+
+## Phase 17b: Fine-Grained Transition Analysis (Complete)
+
+### Motivation
+
+Phase 17 identified a sharp transition between α=0.50 and α=0.75. Phase 17b narrows down the exact boundary.
+
+### Implementation
+
+Trained 4 additional models with α = {0.55, 0.60, 0.65, 0.70}.
+
+### Results: Fine Sweep
+
+| α | L14 ECE | L14 AUC | Full AUC | τ=0.80 AUC | τ=0.80 Speed | L16 ECE |
+|---|---------|---------|----------|------------|--------------|---------|
+| 0.50 | 0.4010 | 0.7165 | 0.9741 | 0.7165 | 1.47x | 0.3574 |
+| 0.55 | 0.4151 | 0.8562 | 0.9724 | 0.8562 | 1.46x | 0.3371 |
+| 0.60 | 0.3412 | 0.7117 | 0.9752 | 0.7121 | 1.48x | 0.2816 |
+| **0.65** | **0.3215** | **0.9617** | **0.9813** | **0.9619** | **1.31x** | **0.0962** |
+| 0.70 | 0.3421 | 0.9495 | 0.9762 | 0.9506 | 1.36x | 0.0814 |
+| 0.75 | 0.2641 | 0.9748 | 0.9840 | 0.9691 | 1.33x | 0.0743 |
+
+### Key Finding: Transition at α ≈ 0.60-0.65
+
+The phase boundary is precisely located between α=0.60 and α=0.65:
+
+| Metric | α=0.60 | α=0.65 | Jump |
+|--------|--------|--------|------|
+| L14 AUC | 0.7117 | 0.9617 | **+35%** |
+| τ=0.80 AUC | 0.7121 | 0.9619 | **+35%** |
+| L16 ECE | 0.2816 | 0.0962 | **3x better** |
+
+### Observations
+
+1. **Sharp phase boundary at ~62-65% semantic weight** - not gradual
+2. **Calibration improvement at L16** (ECE: 0.28 → 0.10) coincides with AUC jump
+3. **Interesting non-monotonicity**: α=0.55 has higher L14 AUC (0.86) than α=0.60 (0.71), but still fails at τ=0.80 because it's overconfident without being discriminative
+4. **L14 ECE stays high** (~0.32-0.34) even after transition - the key is L16+ calibration
+
+### Interpretation
+
+The critical ratio is approximately **2/3 semantic, 1/3 random** for the decision geometry to form correctly. This suggests:
+
+1. The semantic component provides an initial "direction" in embedding space
+2. Some random component is tolerable (up to ~35%)
+3. Below the threshold, the model learns the task at full depth but the intermediate-layer geometry is malformed
+
+The transition is **discrete**, not continuous - consistent with a phase transition in the representational geometry.
+
+### Files Added
+
+```
+run_phase17b_fine_sweep.sh         # Fine sweep runner
+results/phase17_eval/alpha0{55,60,65,70}_*
+results/phase17_calibration/alpha0{55,60,65,70}_*
+results/phase17_adaptive/alpha0{55,60,65,70}_*
+models/unified/semantic_alpha0{55,60,65,70}_seed42/
+```
+
+---
+
+## Summary of All Phases
+
+| Phase | Focus | Key Finding |
+|-------|-------|-------------|
+| 1-4 | Initial MVP & debugging | Label masking critical, format simplification needed |
+| 5 | Track 1 redesign | Symmetric tokens + holdout testing |
+| 6 | Seed sensitivity | Token model stable, baseline unstable under shift |
+| 7 | Track 2 design | Efficiency experiment ready |
+| 8 | Style leakage (Exp 3A) | Token degrades less than baseline under rewrites |
+| 9 | Retrain triad | Mixed training + token = best performance |
+| 10 | Layerwise probing | Decision crystallizes earlier for token model |
+| 11 | Ablations (E2) | **Random tokens work** → it's about task structure, not semantics |
+| 12 | Actual early-exit | **1.38x speedup** at 98% of final AUC (layer 16) |
+| 13 | R/N baseline | **Dedicated tokens crystallize 4-5 layers earlier** than existing vocab |
+| 14 | Test-R evaluation | **6-layer gap** on style-neutralized data (larger than original) |
+| 15 | Unified harness & init study | **Initialization determines crystallization**; token string is secondary |
+| 16 | Adaptive early-exit | Semantic init enables **calibrated confidence** → adaptive exit works |
+| 16b | Robustness checks | Semantic init has **3x lower ECE** at L14; normalization can't fix random |
+| 17 | Init interpolation (coarse) | **Sharp phase transition** between α=0.50 and α=0.75 |
+| 17b | Init interpolation (fine) | **Boundary at α≈0.62-0.65** (2/3 semantic, 1/3 random) |
+
+**Final interpretation**: Discrete decision channels require **semantic initialization above ~65%** for adaptive early-exit to function. Below this threshold, the model learns the task but the intermediate-layer decision geometry is malformed. The transition is sharp, not gradual - suggesting a phase transition in representational structure.
+
+---
+
 ## Future Directions
 
-1. **Init interpolation sweep (Phase 17)**: Test α ∈ {0, 0.25, 0.5, 0.75, 1.0} between random and semantic init.
+1. **Semantic-embed + random-lm_head ablation**: Test whether the lm_head initialization matters separately from embed initialization.
 
 2. **Per-example difficulty analysis**: Correlate early-exit layer with example characteristics.
 
 3. **K>2 tokens (Phase 18)**: Extend to multi-class with factorized decision channels.
+
+4. **Cross-task validation**: Test if the ~65% semantic threshold generalizes to other classification tasks.
 
 ---
 
