@@ -1448,20 +1448,385 @@ models/unified/semantic_alpha0{55,60,65,70}_seed42/
 | 16b | Robustness checks | Semantic init has **3x lower ECE** at L14; normalization can't fix random |
 | 17 | Init interpolation (coarse) | **Sharp phase transition** between α=0.50 and α=0.75 |
 | 17b | Init interpolation (fine) | **Boundary at α≈0.62-0.65** (2/3 semantic, 1/3 random) |
+| K4.1 | K=4 "Love" data generation | 8 iterations; position-encoding achieved 29.5% TF-IDF but changed task |
+| K4.1b | Why "Love" failed | ROM/FAM/PLA have overlapping contexts; explicit disambiguation leaks |
+| K4.2 | Pivot to "Support" | New taxonomy with naturally distinct contexts; spec complete |
 
 **Final interpretation**: Discrete decision channels require **semantic initialization above ~65%** for adaptive early-exit to function. Below this threshold, the model learns the task but the intermediate-layer decision geometry is malformed. The transition is sharp, not gradual - suggesting a phase transition in representational structure.
 
 ---
 
+## Phase K4.1: K=4 Data Generation - The Style Leakage Gauntlet (Complete)
+
+### Motivation
+
+Phases 1-17 established that discrete decision channels with ~65% semantic initialization enable early-exit inference for K=2 (binary) classification. The next step: **extend to K=4 multi-class classification** to test if these findings generalize.
+
+The K=4 taxonomy disambiguates "I love ___" across four categories:
+- **ROM** (romantic): attraction toward a person
+- **FAM** (familial): family bond toward a person
+- **PLA** (platonic): friendship/loyalty toward a person
+- **OBJ** (non-person): love of thing/place/activity
+
+### The Core Challenge
+
+K=4 data generation proved much harder than K=2. The fundamental tension:
+1. **Learnability**: The model needs SOME signal to distinguish categories
+2. **No TF-IDF exploitation**: Any consistent vocabulary pattern becomes a shortcut
+
+This created a gauntlet of failed attempts before finding a solution.
+
+### Attempt Log
+
+#### v0.1: Direct Category-Specific Slots (FAILED)
+**Approach**: Each category has distinct disambiguation phrases:
+- ROM: "a future together", "what they're building together"
+- FAM: "how long they've known each other", "where they came from together"
+- PLA: "the bond they've chosen", "what they've faced side by side"
+- OBJ: "a thing they care about", "a place that matters to them"
+
+**Result**: 100% TF-IDF accuracy - slots became direct watermarks.
+
+#### v0.2: Overlapping Vocabulary Attempt (FAILED)
+**Approach**: Use overlapping base words ("always", "time", "together", "between them") with different semantic structures.
+
+**Result**: 97% TF-IDF accuracy - TF-IDF still found distinctive n-grams like "chosen" for PLA, "deepening" for ROM.
+
+#### v0.3: Minimal Targets, No Disambiguation (TOO SIMPLE)
+**Approach**:
+- All person-directed (ROM/FAM/PLA) use only "you"
+- OBJ uses only "this"
+- No disambiguation sentence at all
+
+**Result**: 26.5% TF-IDF (at chance!) BUT ROM/FAM/PLA scenarios are literally identical - unlearnable by any model.
+
+#### v0.4: Shared Person Cues (STILL UNLEARNABLE)
+**Approach**: ROM/FAM/PLA all draw from the SAME cue pool:
+- "Something between them has meaning."
+- "There's a connection between them that matters."
+- "The bond between them is real."
+
+**Result**: 27% TF-IDF, but still unlearnable - no signal to distinguish ROM from FAM from PLA.
+
+#### v0.5: Structural Negation (FAILED)
+**Approach**: All three relationship words (partner, family, friend) appear in every sample. Use negation to indicate which is true:
+- "Not friend, not family. This is partner."
+- "B doesn't mean 'partner' or 'friend'. B means 'family'."
+
+**Result**: 74.5% TF-IDF - TF-IDF caught "is family", "is friend", "is partner" bigrams. The affirmed word has a consistent marker.
+
+#### v0.5.1: Equivalent Syntactic Positions (FAILED)
+**Approach**: Put all three words in identical syntactic slots:
+- "Partner: yes. Family: no. Friend: no."
+- "[partner: no] [friend: no] [family: yes]"
+
+**Result**: 97% TF-IDF - Caught "family yes", "friend yes", "partner yes" bigrams.
+
+#### v0.5.2: Affirmed Word First (FAILED)
+**Approach**: Put the affirmed word FIRST in the list, use "the first applies":
+- ROM: "Of partner, family, or friend - the first applies."
+- FAM: "Of family, partner, or friend - the first applies."
+
+**Result**: 87.5% TF-IDF - Caught "of family", "of partner", "of friend" bigrams.
+
+#### v0.5.4: Position-Based Encoding (SUCCESS!)
+**Approach**: Randomize word ORDER, use position word to indicate which is true:
+- ROM: "List: family, partner, friend. Answer: second." (partner is 2nd)
+- FAM: "Options: partner, friend, family. The third applies." (family is 3rd)
+- PLA: "Friend, family, partner - the first one." (friend is 1st)
+
+**Key insight**:
+- Each word (partner/family/friend) appears in each position (1st/2nd/3rd) equally often
+- Each position word (first/second/third) appears in each label equally often
+- TF-IDF cannot correlate words OR positions with labels
+
+**Result**: **29.5% TF-IDF** (essentially chance for K=4) AND learnable by a model that can parse list structure!
+
+### Why Position-Based Encoding Works
+
+TF-IDF is a bag-of-words model. It can only learn:
+- Word presence/absence
+- Word co-occurrence (bigrams)
+
+Position-based encoding defeats TF-IDF because:
+1. All relationship words appear in all labels (uniform distribution)
+2. All position words appear in all labels (uniform distribution)
+3. No bigram pattern correlates with labels
+
+But a language model can:
+1. Parse the list to find word at indicated position
+2. Map that word to the label (partner→ROM, family→FAM, friend→PLA)
+
+This requires **structural understanding**, not vocabulary matching.
+
+### Final Data Structure
+
+**4-sentence template**:
+```
+Sentence 1: A and B are [EVENT] in the [SETTING].
+Sentence 2: A says, "I love [TARGET]."
+Sentence 3: [NEUTRAL_BUCKET_CUE]
+Sentence 4: [POSITION-BASED DISAMBIGUATION]
+```
+
+**Sample scenarios**:
+```
+ROM: "A and B are packing up after an event in the park. A says, 'I love you.' They can finally relax. List: family, partner, friend. Answer: second."
+
+FAM: "A and B are cleaning up after a meal in the living room. A says, 'I love you.' The moment is quiet and simple. Options: partner, friend, family. The third applies."
+
+PLA: "A and B are doing the dishes in the park bench. A says, 'I love you.' Nothing else is going on around them. List: friend, family, partner. Answer: first."
+
+OBJ: "A and B are sitting quietly after a long day in the sidewalk. A says, 'I love this.' Nothing else is going on around them. Options: friend, partner, family. None apply."
+```
+
+### Key Takeaways
+
+1. **TF-IDF is surprisingly powerful** - Any consistent vocabulary pattern will be exploited
+2. **The learnability/leakage tradeoff is real** - You can't just remove all signal
+3. **Structural encoding beats vocabulary encoding** - Position-based disambiguation defeats bag-of-words while remaining learnable
+4. **ChatGPT's insight was crucial**: "TF-IDF is bad at coreference, negation, and order-dependent meaning"
+
+### Collaboration Note
+
+This phase was done in collaboration with ChatGPT (GPT-4), which provided:
+- Initial skeleton-quartet design
+- Structural disambiguation concept (negation + role binding)
+- Red-teaming of each failed attempt
+- Final validation of position-based approach
+
+### Files Modified/Created
+
+```
+src/data_generation_k4.py    # K=4 generator with position-based encoding
+src/style_leakage_k4.py      # TF-IDF leakage checker (stop_words=None)
+data_k4/stream.jsonl         # Generated dataset (200 examples)
+docs/PHASE_K4_DATA_SPEC.md   # Detailed specification
+```
+
+### Summary of Phase K4.1
+
+| Question | Answer |
+|----------|--------|
+| Can we generate K=4 data without TF-IDF leakage? | **Yes**, with position-based encoding |
+| What's the TF-IDF accuracy? | **29.5%** (chance is 25%) |
+| Is ROM/FAM/PLA distinguishable? | Only by structural parsing, not vocabulary |
+| How many attempts did it take? | **8 iterations** (v0.1 through v0.5.4) |
+
+### Next Steps for K=4
+
+1. Generate larger dataset (500+ examples per category)
+2. Create Test-R rewrites that paraphrase the position encoding
+3. Train model and evaluate if structural disambiguation is learnable
+4. Test if ~65% semantic init threshold holds for K=4
+
+---
+
+## Phase K4.1b: Why K=4 "Love" Can't Match K=2's Approach (Analysis)
+
+### The Realization
+
+After achieving 29.5% TF-IDF with position-based encoding, we confronted a fundamental problem: **the K=4 task is nothing like the K=2 task**.
+
+### How K=2 Worked
+
+In K=2 (romantic vs non-romantic), the **scenario context itself** disambiguated the meaning:
+
+```
+K=2 Example (non-romantic):
+"After the meeting, Sarah turned to her colleague. 'I love you for
+covering for me,' she said with relief."
+```
+
+- No explicit label encoding in the text
+- The model must understand that "covering for me" + "colleague" + "relief" = gratitude, not romance
+- **Semantic understanding is required** - TF-IDF fails because the same words appear in both classes
+- The pivot phrase "I love you" is genuinely ambiguous; context resolves it
+
+### Why K=4 Can't Work The Same Way
+
+The K=4 categories (ROM/FAM/PLA) all describe **person-directed love using "I love you"**. The problem:
+
+| Category | Pivot Phrase | What Differs? |
+|----------|--------------|---------------|
+| ROM | "I love you" | The *type* of relationship |
+| FAM | "I love you" | The *type* of relationship |
+| PLA | "I love you" | The *type* of relationship |
+| OBJ | "I love this" | Target word (easy to distinguish) |
+
+For ROM vs FAM vs PLA, the **only** distinguishing information is the relationship type. But relationship type must be expressed somehow, and any expression becomes a TF-IDF shortcut:
+
+- **Implicit context cues** → TF-IDF exploits them (e.g., "kitchen" → FAM, "restaurant" → ROM)
+- **Explicit relationship words** → Direct watermarks ("partner", "family", "friend")
+- **Semantic paraphrases** → TF-IDF finds distinctive vocabulary ("chosen bond" → PLA, "always been there" → FAM)
+- **Structural negation** → TF-IDF catches affirmed-word patterns ("is partner" → ROM)
+
+### The Fundamental Asymmetry
+
+**K=2 (romantic vs non-romantic):**
+- These categories have **naturally different contexts**
+- Romantic love appears in dates, relationships, intimate moments
+- Non-romantic love appears in workplace gratitude, family duty, friendship loyalty
+- The **scenario itself** distinguishes them without explicit labeling
+- TF-IDF can be defeated because the same *vocabulary* appears in both, just with different *meaning*
+
+**K=4 (ROM vs FAM vs PLA):**
+- These categories have **overlapping contexts**
+- All three can appear in homes, during meals, in emotional moments
+- There's no natural setting/event that uniquely signals one vs another
+- **Explicit disambiguation is required** - and any explicit signal leaks to TF-IDF
+
+### The Position-Encoding Compromise
+
+Our "solution" (position-based encoding) defeated TF-IDF but **changed the task entirely**:
+
+| Aspect | K=2 Task | K=4 Task (position-encoded) |
+|--------|----------|----------------------------|
+| What model learns | Semantic context understanding | List parsing + instruction following |
+| Disambiguation source | Implicit in scenario | Explicit in structured format |
+| Comparable to K=2? | N/A | **No** |
+| Tests semantic init hypothesis? | Yes | Only partially (mechanism, not semantics) |
+
+### Why "Love" Doesn't Scale to K=4
+
+The word "love" is the problem. In English:
+- "I love you" to a romantic partner vs family member vs friend → **same words, same syntax**
+- The only difference is the **unstated relationship** between speaker and listener
+- That relationship MUST be stated somehow for training data
+- Stating it creates the shortcut
+
+### The Path Forward
+
+**Option 1: Different concept** - Find a word/phrase where K=4 categories have naturally distinct contexts (like K=2 did), so no explicit disambiguation is needed.
+
+**Option 2: Accept the difference** - Use position-encoded K=4 to test the decision channel mechanism, acknowledging it tests different capabilities than K=2.
+
+**Option 3: Hybrid evaluation** - Train on position-encoded data, but evaluate on naturalistic scenarios (transfer test).
+
+### Decision
+
+We're pivoting to **Option 1**: find a different concept where 4+ categories have naturally distinct contexts that don't require explicit labeling.
+
+The "love" taxonomy (ROM/FAM/PLA/OBJ) was elegant in theory but fundamentally incompatible with the K=2 methodology. The insight: **not all K>2 classification problems are created equal**. Some have natural contextual separation; others don't.
+
+---
+
+## Phase K4.2: Pivot to "Support" — Proper K=4 Design (In Progress)
+
+### Motivation
+
+After abandoning the "love" taxonomy, we needed a new word that:
+1. Has multiple distinct meanings (K=4+)
+2. Those meanings have **naturally distinct contexts** (like K=2's romantic vs non-romantic)
+3. No explicit disambiguation is required — context alone determines the label
+4. A human can reliably classify examples without auxiliary structure
+
+### The New Word: "Support"
+
+We selected **"support"** because it naturally splits into four semantically distinct categories with different contextual signatures:
+
+| Category | Code | What it accomplishes | Key constraint |
+|----------|------|---------------------|----------------|
+| **Emotional** | E | Changes emotional/psychological state | No tasks completed, no resources delivered |
+| **Practical** | P | Materially changes an outcome via action | Remove actions → support disappears |
+| **Ideological** | I | Expresses agreement/endorsement only | No causal contribution to implementation |
+| **Structural** | S | Literal mechanical/physical support | No people, emotions, or opinions |
+
+### Why "Support" Works Where "Love" Failed
+
+| Problem with "Love" | How "Support" Solves It |
+|---------------------|------------------------|
+| ROM/FAM/PLA all use "I love you" | E/P/I/S have naturally different contexts |
+| Relationship type must be stated explicitly | Support type is implicit in what happens |
+| Overlapping contexts (all can happen at home) | Distinct outcomes (emotion vs task vs endorsement vs physical) |
+| Any disambiguation becomes TF-IDF exploitable | Context alone disambiguates |
+
+### Key Design Decisions
+
+1. **Entity constraints (v1)**:
+   - E/P/I: People only (no animals)
+   - S: Objects/systems only (no people doing the supporting)
+
+2. **No explicit category cues**: Words like "emotionally", "physically", "structurally" are forbidden
+
+3. **Easy/Hard split**:
+   - Easy (60-70%): Clear, canonical examples
+   - Hard (30-40%): Near-miss examples that borrow surface cues from other categories
+   - The guiding principle: **"Verbs may overlap. Outcomes must not."**
+
+4. **Label decision rule**: Based on what the support *accomplishes*, not the language used
+
+### Canonical Examples (one per category)
+
+**Emotional**: Job loss → sister checks in, listens, reminds him the setback doesn't define him → support through uncertainty
+- No tasks completed, no material change, only emotional state changes
+
+**Practical**: Deadline approaching → Alex stays late, fixes bugs, brings equipment → efforts support finishing on time
+- Remove the actions and the support disappears
+
+**Ideological**: Reads transportation policy proposal → agrees with goals → publicly states support
+- No implementation, no action, only endorsement
+
+**Structural**: Bridge with steel beams → beams hold weight, keep structure stable → beams support the bridge
+- No people, no intent, purely mechanical
+
+### Near-Miss Examples (hard cases)
+
+Each deliberately borrows surface cues from other categories:
+- **Emotional near-miss**: Uses "stayed late" and "office" (practical cues) but support is purely emotional
+- **Practical near-miss**: Uses "talked with" and conversation (emotional cues) but support is action-based
+- **Ideological near-miss**: Uses "spent weeks" and "effort" (practical cues) but support is only approval
+- **Structural near-miss**: Uses "responded", "prevented" (agent-like verbs) but support is mechanical
+
+### Files Created
+
+```
+docs/K4_SUPPORT_SPEC.md              # Full specification with examples and constraints
+docs/K4_SUPPORT_GENERATION_PROMPT.md # Prompt template for data generation
+docs/K4_SUPPORT_VALIDATION_CHECKLIST.md # Validation checklist for quality control
+archive/k4_love_attempt/             # Archived "love" attempt files
+```
+
+### Collaboration Note
+
+This design was developed in collaboration with ChatGPT (GPT-4), which provided:
+- The "support" concept and category definitions
+- Template skeletons and canonical examples
+- Near-miss design and cue injection strategy
+- Validation checklist and generation prompts
+- Critical feedback on boundary conditions (I vs P, S2 scope)
+
+### Next Steps
+
+1. Generate pilot dataset (300 train, 160 test) using the generation prompt
+2. Run TF-IDF leakage check (target: well below neural model performance)
+3. Human review of edge cases
+4. Scale to full dataset if pilot passes validation
+5. Train models and test if K=2 findings generalize
+
+### Summary
+
+| Question | Answer |
+|----------|--------|
+| Why pivot from "love"? | ROM/FAM/PLA have overlapping contexts; explicit disambiguation leaks |
+| Why "support"? | Four meanings with naturally distinct contexts |
+| What's the core principle? | Verbs may overlap. Outcomes must not. |
+| How is this like K=2? | Context alone determines label; no explicit encoding |
+| Status | Spec complete; ready for data generation |
+
+---
+
 ## Future Directions
 
-1. **Semantic-embed + random-lm_head ablation**: Test whether the lm_head initialization matters separately from embed initialization.
+1. **K=4 "Support" data generation and training (Phase K4.3)**: Generate pilot dataset, validate with TF-IDF, train models.
 
-2. **Per-example difficulty analysis**: Correlate early-exit layer with example characteristics.
+2. **K=4 semantic init threshold**: Test if the ~65% threshold shifts for multiclass.
 
-3. **K>2 tokens (Phase 18)**: Extend to multi-class with factorized decision channels.
+3. **K=4 calibration analysis**: Does calibration fragment by class, or emerge uniformly?
 
-4. **Cross-task validation**: Test if the ~65% semantic threshold generalizes to other classification tasks.
+4. **Semantic-embed + random-lm_head ablation**: Test whether the lm_head initialization matters separately from embed initialization.
+
+5. **Per-example difficulty analysis**: Correlate early-exit layer with example characteristics (easy vs hard).
 
 ---
 
