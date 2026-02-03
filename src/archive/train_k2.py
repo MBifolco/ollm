@@ -1,8 +1,7 @@
 """
-Unified Training Harness (Phase 15)
+K=2 Training Script (Love Disambiguation)
 
-Single source of truth for all token model variants.
-Eliminates pipeline mismatches between experiments.
+Single source of truth for all K=2 DDC model variants.
 
 Supports:
 - Channel types: dedicated (semantic/random), rn_vocab, single
@@ -11,11 +10,11 @@ Supports:
 - Seeds for reproducibility
 
 Usage:
-    python src/train_unified.py --channel dedicated --token_string semantic --init semantic --train_set M --seed 42
-    python src/train_unified.py --channel dedicated --token_string random --init random --train_set M --seed 42
-    python src/train_unified.py --channel dedicated --token_string random --init semantic --train_set M --seed 42  # swap
-    python src/train_unified.py --channel rn_vocab --train_set M --seed 42
-    python src/train_unified.py --channel single --train_set M --seed 42
+    python src/train_k2.py --channel dedicated --token_string semantic --init semantic --train_set M --seed 42
+    python src/train_k2.py --channel dedicated --token_string random --init random --train_set M --seed 42
+    python src/train_k2.py --channel dedicated --token_string random --init semantic --train_set M --seed 42  # swap
+    python src/train_k2.py --channel rn_vocab --train_set M --seed 42
+    python src/train_k2.py --channel single --train_set M --seed 42
 """
 from __future__ import annotations
 

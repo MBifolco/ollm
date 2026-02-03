@@ -339,7 +339,7 @@ def main():
                        choices=["semantic", "semantic-randinit", "random",
                                "random-seminit", "single", "all"],
                        help="Which variant to train")
-    parser.add_argument("--data_dir", type=str, default="data_M",
+    parser.add_argument("--data_dir", type=str, default="data/k2_love/M",
                        help="Directory with mixed training data")
     parser.add_argument("--output_dir", type=str, default="models/ablations_M")
     parser.add_argument("--seed", type=int, default=42)

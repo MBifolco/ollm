@@ -37,7 +37,7 @@ run_experiment() {
 
     echo "TRAIN: $model_name (channel=$channel, token=$token_string, init=$init, lm_head=$init_lm_head)"
 
-    python src/train_unified.py \
+    python src/train_k2.py \
         --channel "$channel" \
         --token_string "$token_string" \
         --init "$init" \

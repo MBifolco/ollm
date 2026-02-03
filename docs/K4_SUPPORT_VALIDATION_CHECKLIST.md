@@ -211,6 +211,9 @@ Train a trivial TF-IDF + logistic classifier.
 
 If TF-IDF performs well → leakage exists.
 
+**Important for minimal pairs**: If the dataset contains grouped variants (e.g. `base_id` with 4 variants per base),
+row-wise StratifiedKFold can be misleading. Use **GroupKFold by `base_id`** (hold out entire base scenarios) as the primary leakage metric.
+
 Target ranges:
 * Train: ideally 40-60% (moderate, not trivial)
 * Test-R: near chance (~25% for K=4)

@@ -202,8 +202,8 @@ class SingleModelEvaluator:
 
 def run_triad_evaluation(
     models_dir: str = "models/triad",
-    test_o_path: str = "data_O/val.jsonl",
-    test_r_path: str = "data_R/val.jsonl",
+    test_o_path: str = "data/k2_love/O/val.jsonl",
+    test_r_path: str = "data/k2_love/R/val.jsonl",
     output_file: str = "triad_results.json"
 ):
     """Run evaluation on all 18 triad models."""
@@ -313,8 +313,8 @@ def run_triad_evaluation(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate retrain triad models")
     parser.add_argument("--models_dir", type=str, default="models/triad")
-    parser.add_argument("--test_o", type=str, default="data_O/val.jsonl")
-    parser.add_argument("--test_r", type=str, default="data_R/val.jsonl")
+    parser.add_argument("--test_o", type=str, default="data/k2_love/O/val.jsonl")
+    parser.add_argument("--test_r", type=str, default="data/k2_love/R/val.jsonl")
     parser.add_argument("--output", type=str, default="triad_results.json")
     args = parser.parse_args()
 

@@ -265,9 +265,9 @@ ollm/
 │   ├── test.jsonl                # Test split (230, holdout: crisis + collaboration)
 │   ├── test_rewritten.jsonl      # Exp3A: rewritten test scenarios
 │   └── train_rewritten.jsonl     # Exp3A: rewritten training scenarios
-├── data_O/                       # Original data (for triad experiment)
-├── data_R/                       # Rewritten data (for triad experiment)
-├── data_M/                       # Mixed data (O+R, for triad experiment)
+├── data/k2_love/O/                       # Original data (for triad experiment)
+├── data/k2_love/R/                       # Rewritten data (for triad experiment)
+├── data/k2_love/M/                       # Mixed data (O+R, for triad experiment)
 ├── src/
 │   ├── data_generation.py        # Example generation with Claude
 │   ├── split_dataset.py          # Dataset splitting (--track1 for holdout mode)
@@ -439,9 +439,9 @@ The retrain triad confirms that:
 ### Files Added
 
 ```
-data_O/           # Original training data
-data_R/           # Rewritten training data
-data_M/           # Mixed training data (O+R)
+data/k2_love/O/           # Original training data
+data/k2_love/R/           # Rewritten training data
+data/k2_love/M/           # Mixed training data (O+R)
 models/triad/     # All 18 trained models
 src/eval_triad.py # Triad evaluation script
 run_triad_simple.sh # Training script
@@ -1827,6 +1827,258 @@ This design was developed in collaboration with ChatGPT (GPT-4), which provided:
 4. **Semantic-embed + random-lm_head ablation**: Test whether the lm_head initialization matters separately from embed initialization.
 
 5. **Per-example difficulty analysis**: Correlate early-exit layer with example characteristics (easy vs hard).
+
+---
+
+## Phase K4.4b: K=4 Training + Crystallization (Complete)
+
+### Training Results (Seed 42, leaky K=4 data)
+
+| Model | Eval Loss | Train Loss | Final Accuracy |
+|------|-----------|------------|----------------|
+| DDC‑Semantic (α=0.65) | 0.0009 | 0.216 | 95.0% |
+| DDC‑Random (α=0.0) | 0.016 | 0.155 | 96.7% |
+| Baseline‑Dedicated (⟦BASE_*⟧) | 2.68 | 2.75 | **25.0% (chance)** |
+| Baseline‑Vocab (E/P/I/S) | 0.003 | 0.063 | 96.7% |
+
+### Crystallization Results (Macro‑AUC ≥ 0.95)
+
+| Model | Crystallization Layer |
+|------|------------------------|
+| DDC‑Semantic | **L17** |
+| Baseline‑Vocab | **L17** |
+| DDC‑Random | L21 |
+| Baseline‑Dedicated | Never |
+
+### Interpretation
+
+1. **Semantic init accelerates crystallization**: DDC‑Semantic reaches ≥0.95 macro‑AUC 4 layers earlier than DDC‑Random (L17 vs L21).
+2. **Baseline‑Vocab parity**: DDC‑Semantic and Baseline‑Vocab both crystallize at L17 on this leaky K=4 task.
+3. **Baseline‑Dedicated failure is likely an init confound**: baseline‑dedicated uses *default resize init* only, while DDC‑Random uses explicit random init for both embeddings + lm_head (scaled to existing std). This mismatch can explain collapse; it should not be interpreted as “new tokens cannot learn.”
+
+**Saved models**:
+```
+models/k4/ddc_semantic_alpha065_seed42
+models/k4/ddc_random_alpha000_seed42
+models/k4/baseline_dedicated_seed42
+models/k4/baseline_vocab_seed42
+```
+
+---
+
+## Phase K4.5: Zero‑Shot Label Priors & Control Probes (Complete)
+
+### Motivation
+We tested whether “baseline‑vocab letters” (E/P/I/S) have privileged categorical geometry vs other token sets (R/N, random letters), and whether zero‑shot priors might explain K=2 vs K=4 behavior.
+
+### Probe 1: Embedding Geometry (pre‑finetune)
+Computed pairwise cosine similarities among token embeddings:
+- **EPIS** mean cos ≈ 0.416
+- **RN** mean cos ≈ 0.422 (single pair)
+- **QJXZ** mean cos ≈ 0.308
+
+**Result**: EPIS is only slightly tighter than random letters; geometry alone does **not** explain crystallization differences.
+
+### Probe 2: Zero‑shot categorical prompt (uncontrolled)
+The initial probe showed RN with extreme confidence (~0.98 max‑prob), but this was confounded by 2‑way vs 4‑way sets, prompt suffix, and tokenization.
+
+### Probe 3: Controlled zero‑shot probe (cardinality + suffix + spacing)
+Controls introduced:
+- 4‑way sets only (EPIS, QJXZ, RNAB)
+- “Answer:” suffix
+- space vs no‑space tokens
+- option order reversal
+- 5 examples (pilot_v4), ROCm via `HSA_OVERRIDE_GFX_VERSION=10.3.0`
+
+**Key result**: RN is **not** uniquely privileged under controls (RNAB becomes near‑uniform).  
+Conclusion: the earlier RN≈0.98 was a probe artifact, not categorical readiness.
+
+**Observed skew**: Some tokens (e.g., “ Q” in QJXZ, “ S” in EPIS) remain peaky under specific suffix/spacing, indicating **format/position priors**, not semantic alignment.
+
+**Controlled run (template=answer, n=5, include_reverse):**
+- EPIS (nospace): entropy 0.81–0.82, maxp 0.52–0.55, argmax mostly S/E
+- EPIS (space): entropy ~0.81, maxp ~0.67, argmax “ S”
+- QJXZ (nospace): entropy 0.81–0.86, maxp ~0.71, argmax flips with order (Q vs Z)
+- QJXZ (space): entropy 0.40–0.87, maxp 0.57–0.90, argmax “ Q” or “ Z”
+- RNAB (nospace): entropy 0.98, maxp 0.52–0.59, argmax R/B
+- RNAB (space): entropy 0.89–1.15, maxp 0.50–0.53, argmax R/B
+
+**Template sweep (n=5, include_reverse, space/no‑space, 4‑way sets):**
+- Strong **suffix‑dependent skew** persists across templates; space‑prefixed tokens often dominate.
+- EPIS: “answer/letter/output/choice/token” often favor **S** (nospace) or **“ S”** (space); “respond” reduces skew.
+- QJXZ: many templates heavily favor **Q/Z**, with order reversing the argmax; space‑prefixed **“ Q”** is frequently dominant.
+- RNAB: argmax flips with order and suffix (A/B/R), indicating **format/position priors** rather than semantic readiness.
+
+**2‑way controls (template=answer, n=5):**
+- All 2‑way sets show **very high max‑prob** (≈0.79–0.97) and strong **order effects** (argmax flips when reversed).
+- Confirms that 2‑way probes are **not comparable** to 4‑way probes; cardinality alone can create extreme confidence.
+
+**Final verdict (zero‑shot label priors):**
+Zero‑shot label behavior is **dominated by prompt suffix, candidate ordering, tokenization (space vs no‑space), and set cardinality**.  
+Under controlled 4‑way probes, RNAB is **not** uniquely privileged, and apparent “letter superiority” dissolves.  
+Therefore, K=2 vs K=4 baseline differences should **not** be attributed to intrinsic label‑token readiness; instead treat label tokens as a nuisance variable and control via consistent output format (or average across multiple label sets).
+
+**Top‑k unrestricted logits (template sweep, n=5):**
+- The unrestricted top‑k list is dominated by **generic continuations** (“The”, “Based”, “This”, “In”, “Given”), not letter tokens.
+- When a letter is favored, it is usually because it **matches a common generic next‑token** (e.g., “S”/“ Q” aligning with “Sure/Question”) rather than any task semantics.
+- This supports the interpretation that **position/suffix priors** drive the peaky distributions, not label meaning.
+
+### Updated Conclusion
+Token‑set effects are dominated by **prompt‑local priors, tokenization (space vs no‑space), and cardinality**, not “intrinsic categorical geometry.” This weakens any claim that EPIS are inherently better labels; it strengthens the claim that output format and priors can interfere with axis formation.
+
+### New Scripts
+```
+src/zero_shot_label_probe.py           # embedding geometry + basic zero‑shot probe
+src/zero_shot_label_probe_controls.py  # controlled probe with 4‑way sets + suffix/spacing/order
+```
+
+---
+
+## Phase K4.6: K2/K4 Prompt‑Grounding Insight (Discussion)
+
+### Key insight
+Instruction text can *ground* output symbols and distort priors.
+K=2 R/N prompts explicitly map letters to labels ("R (romantic), N (non‑romantic)"), whereas K=4 baseline‑vocab does not provide equally strong mapping. This introduces an **instruction‑level prior** that can interfere with clean decision geometry.
+
+### Implication
+If the goal is to study internal decision geometry, **avoid instruction‑level symbol grounding**; use neutral symbols or map tokens outside the instruction.
+
+---
+
+## Phase K4.7: Vocab Token Priors - Controlled Baseline Design
+
+### Background
+
+We compared:
+- **DDC new tokens** (⟦…⟧) with semantic/random/interpolated init
+- **Baseline vocab tokens** (existing tokens like letters)
+- **Baseline dedicated** (new tokens with random init; expected to test "new tokens without semantics")
+
+Goal: understand how decision-token design affects learning, calibration, and crystallization layer (early separability / early exit viability).
+
+### Key Discovery: Vocab-token choice introduces large pretrained priors at the decision locus
+
+The base model has strong next-token preferences at positions like `DECISION:` depending on:
+- The prompt suffix ("Answer:", "Respond with…", etc.)
+- Whether candidate tokens are space-prefixed (`" X"`) vs nospace (`"X"`)
+- Candidate ordering
+- Cardinality (2-way vs 4-way)
+
+These priors can cause:
+- Early bias in logits
+- Training collapse for decision-only supervision
+- Misleading "zero-shot categorical readiness" interpretations if controls are missing
+
+### Tests Performed and Outcomes
+
+#### 1) TF-IDF leakage checks (K=4 + K=2)
+- Initial K=4 "minimal pairs success" was invalidated: row-wise CV split leaked base scenario structure across folds.
+- Correct metric: **GroupKFold by base_id**.
+- With grouped splits, TF-IDF becomes high again (strong cross-set lexical tells).
+- Follow-up: K=2 datasets also show high TF-IDF accuracy even under GroupKFold(bucket), revealing lexical shortcuts exist in K=2 as well.
+
+**Conclusion**: Datasets are leaky; we proceed acknowledging leakage but tighten narrative. Leakage does not automatically invalidate mechanistic comparisons, but it weakens "semantic purity" claims.
+
+#### 2) Zero-shot categorical prompt probe (initial)
+Early results suggested RN was extremely confident; later analysis showed this was a **probe artifact** (uncontrolled cardinality and suffix effects).
+
+#### 3) Controlled zero-shot probe script (`zero_shot_label_probe_controls.py`)
+Controls added:
+- Equal cardinality (4-way comparisons)
+- Template sweep ("answer", "letter", "respond", etc.)
+- Space vs nospace
+- include_reverse ordering
+
+**Findings**:
+- Strong suffix/space/order priors dominate.
+- Some tokens (" S", " Q") repeatedly dominate depending on template.
+- Order reversals can flip argmax, confirming format bias rather than semantics.
+
+#### 4) Unrestricted top-k logits diagnostic
+When not restricting candidates, top predictions are generic continuations ("The", "Based", "This", "In", "Given").
+When letters dominate among restricted candidates, it's due to completion priors at that locus, not label semantics.
+
+#### 5) Label set selection tool (`select_label_sets.py`)
+Implemented a measurement-based selector that searches candidate token sets and scores "flatness":
+- Maximize entropy / minimize maxp across space/order conditions at `DECISION:` anchor.
+
+**Results**:
+- **K=4** can find relatively flat 4-way sets (e.g., ACRY) and very peaky sets (e.g., RWXZ).
+- **K=2** is intrinsically peaky: even the flattest sets have worst-case maxp ~0.70+ (far from uniform 0.50).
+- Emoji/punctuation can be catastrophically peaky (maxp ≈ 1.0).
+
+**Conclusion**: Binary (K=2) decision-only labeling is structurally sensitive to priors; 4-way is more controllable.
+
+**Selector updates**:
+- Added internal emoji/symbol pools and `--pool_types`/`--pool_custom` for mixed candidate pools.
+- Added `--out_json` to save full results + selected sets (flat/peaky) with config metadata.
+
+**Mixed‑pool 2‑way run**:
+- Flattest examples still have worst‑case maxp ≈ 0.71 (e.g., `['E','O']`).
+- Emoji/symbol pairs can be maximally peaky (maxp ≈ 1.0), confirming they are unsafe for neutral baselines.
+
+### Explaining Observed K=2 vs K=4 Baseline Behavior
+
+#### Why baseline vocab lagged in K=2 love earlier (R/N)
+Multiple factors likely contributed:
+- R/N leaks semantics into the label choice (R=romantic, N=non-romantic).
+- K=2 prompts previously included both `DECISION:` and an `ANSWER:` label string, which changes gradient routing and decision position dominance.
+- Binary prior sensitivity is high.
+
+#### Why baseline vocab matched DDC in K=4 support
+- K=4 data is leaky and easier; many models can learn shortcuts early.
+- K=4 baseline vocab used a single decision-token target (cleaner), and with certain tokens this can perform well.
+- However, token priors can still dominate unless controlled; we observed strong suffix/space/order effects.
+
+### Where We Landed
+
+1. **We proceed with leaky datasets**, but reframe claims:
+   - Focus on mechanistic differences (init threshold, calibration, crystallization timing)
+   - Avoid strong "semantic purity" claims unless tested on low-leakage rewrites/counterfactual sets.
+
+2. **Baseline vocab must be treated as a controlled factor, not a single setting**:
+   - We now run **two vocab baselines** per task:
+     - **vocab_flat**: Token set selected to minimize prior bias at `DECISION:`
+     - **vocab_peaky**: Token set selected to maximize prior bias (stress test)
+
+3. **Prompts and decision locus are unified** across tasks and conditions:
+   - Same `DECISION:` anchor
+   - Consistent tokenization policy (nospace)
+   - Stable option ordering (follows label order in config)
+
+4. **New-token conditions (DDC / dedicated) cannot accidentally canonicalize into un-added "space variants"**:
+   - Strict tokenization rules for new tokens
+   - Store and use verified token IDs everywhere
+
+### Interpretability
+
+This makes future comparisons interpretable:
+- If "peaky" baselines crystallize earlier, it's likely due to priors.
+- If DDC semantic init consistently crystallizes earlier than DDC random under the same interface, that supports the "semantic initialization shapes decision geometry" story, independent of label-token priors.
+
+### Updated Model Variants (train_kn.py)
+
+| Variant | Description | Output Dir Example |
+|---------|-------------|-------------------|
+| `ddc` (α=0.65) | New tokens, semantic init | `ddc_a065_seed42` |
+| `ddc` (α=0.0) | New tokens, random init | `ddc_a000_seed42` |
+| `vocab_baseline` (flat) | Existing tokens, low prior bias | `vocab_flat_seed42` |
+| `vocab_baseline` (peaky) | Existing tokens, high prior bias | `vocab_peaky_seed42` |
+| `dedicated_baseline` | New tokens, random init, neutral strings | `dedicated_seed42` |
+
+### Token Sets Used
+
+**K=2 Love**:
+- DDC: `⟦LOVE_ROM⟧`, `⟦LOVE_NONROM⟧`
+- Flat: `E`, `O` (best worst-case from selection)
+- Peaky: `M`, `Q` (high prior bias)
+- Dedicated: `⟦BASE_ROM⟧`, `⟦BASE_NONROM⟧`
+
+**K=4 Support**:
+- DDC: `⟦SUPPORT_E⟧`, `⟦SUPPORT_P⟧`, `⟦SUPPORT_I⟧`, `⟦SUPPORT_S⟧`
+- Flat: `A`, `C`, `R`, `Y` (relatively flat 4-way)
+- Peaky: `R`, `W`, `X`, `Z` (high prior bias)
+- Dedicated: `⟦BASE_E⟧`, `⟦BASE_P⟧`, `⟦BASE_I⟧`, `⟦BASE_S⟧`
 
 ---
 

@@ -44,7 +44,7 @@ for alpha in "${ALPHAS[@]}"; do
     fi
 
     echo "TRAIN: α=$alpha ($alpha_str)"
-    python src/train_unified.py \
+    python src/train_k2.py \
         --channel dedicated \
         --token_string semantic \
         --init interpolated \
