@@ -132,7 +132,7 @@ train_all_models() {
     for task in "${TASKS[@]}"; do
         for seed in "${SEEDS[@]}"; do
             # DDC with alpha=0.65 (semantic leaning)
-            ((total++))
+            total=$((total + 1))
             if train_model "${task}" "ddc" "${seed}" "--alpha 0.65"; then
                 # Rename to indicate alpha
                 local src="${MODELS_DIR}/${task}_ddc_seed${seed}"
@@ -140,56 +140,56 @@ train_all_models() {
                 if [ -d "${src}" ] && [ ! -d "${dst}" ]; then
                     mv "${src}" "${dst}"
                 fi
-                ((success++))
+                success=$((success + 1))
             else
-                ((failed++))
+                failed=$((failed + 1))
             fi
 
             # DDC with alpha=0.0 (random init)
-            ((total++))
+            total=$((total + 1))
             if train_model "${task}" "ddc" "${seed}" "--alpha 0.0"; then
                 local src="${MODELS_DIR}/${task}_ddc_seed${seed}"
                 local dst="${MODELS_DIR}/${task}_ddc_a000_seed${seed}"
                 if [ -d "${src}" ] && [ ! -d "${dst}" ]; then
                     mv "${src}" "${dst}"
                 fi
-                ((success++))
+                success=$((success + 1))
             else
-                ((failed++))
+                failed=$((failed + 1))
             fi
 
             # Vocab baseline - flat
-            ((total++))
+            total=$((total + 1))
             if train_model "${task}" "vocab_baseline" "${seed}" "--vocab_mode flat"; then
                 local src="${MODELS_DIR}/${task}_vocab_baseline_seed${seed}"
                 local dst="${MODELS_DIR}/${task}_vocab_flat_seed${seed}"
                 if [ -d "${src}" ] && [ ! -d "${dst}" ]; then
                     mv "${src}" "${dst}"
                 fi
-                ((success++))
+                success=$((success + 1))
             else
-                ((failed++))
+                failed=$((failed + 1))
             fi
 
             # Vocab baseline - peaky
-            ((total++))
+            total=$((total + 1))
             if train_model "${task}" "vocab_baseline" "${seed}" "--vocab_mode peaky"; then
                 local src="${MODELS_DIR}/${task}_vocab_baseline_seed${seed}"
                 local dst="${MODELS_DIR}/${task}_vocab_peaky_seed${seed}"
                 if [ -d "${src}" ] && [ ! -d "${dst}" ]; then
                     mv "${src}" "${dst}"
                 fi
-                ((success++))
+                success=$((success + 1))
             else
-                ((failed++))
+                failed=$((failed + 1))
             fi
 
             # Dedicated baseline
-            ((total++))
+            total=$((total + 1))
             if train_model "${task}" "dedicated_baseline" "${seed}" ""; then
-                ((success++))
+                success=$((success + 1))
             else
-                ((failed++))
+                failed=$((failed + 1))
             fi
         done
     done
@@ -276,21 +276,21 @@ eval_all_models() {
                 local model_path="${MODELS_DIR}/${model_name}"
 
                 # Eval on Test-R (primary)
-                ((total++))
+                total=$((total + 1))
                 local output_r="${RESULTS_DIR}/${model_name}_test_r.json"
                 if eval_model "${model_path}" "${test_r}" "test_r" "${output_r}"; then
-                    ((success++))
+                    success=$((success + 1))
                 else
-                    ((failed++))
+                    failed=$((failed + 1))
                 fi
 
                 # Eval on Test-O (secondary)
-                ((total++))
+                total=$((total + 1))
                 local output_o="${RESULTS_DIR}/${model_name}_test_o.json"
                 if eval_model "${model_path}" "${test_o}" "test_o" "${output_o}"; then
-                    ((success++))
+                    success=$((success + 1))
                 else
-                    ((failed++))
+                    failed=$((failed + 1))
                 fi
             done
         done
