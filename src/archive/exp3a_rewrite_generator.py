@@ -28,10 +28,10 @@ from dotenv import load_dotenv
 import anthropic
 from tqdm import tqdm
 
-# Load .env from project root
-load_dotenv(Path(__file__).parent.parent / ".env")
+# Load .env from project root (script is in src/archive/)
+load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY") or os.getenv("ANTHROPIC_KEY_KEY"))
+client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY") or os.getenv("ANTHROPIC_API_KEY"))
 
 # Forbidden relationship-revealing terms (from data_generation.py)
 FORBIDDEN_TERMS = [

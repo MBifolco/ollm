@@ -136,8 +136,12 @@ def create_training_example(
         "attention_mask": [1] * len(full_ids),
     }
 
-    # Mask prompt tokens with -100, keep only response tokens for loss
-    labels = [-100] * prompt_len + full_ids[prompt_len:]
+    # Mask all tokens EXCEPT the first response token (the decision token)
+    # Response includes: [decision_token, <|im_end|>, \n, ...]
+    # We only want to supervise the decision token itself
+    labels = [-100] * len(full_ids)  # Start with all masked
+    if prompt_len < len(full_ids):
+        labels[prompt_len] = full_ids[prompt_len]  # Only unmask the decision token
     tokenized["labels"] = labels
 
     # Store gold label for metrics

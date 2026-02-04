@@ -45,10 +45,11 @@ def make_compute_metrics(token_info: Dict[str, Dict], task_config: TaskConfig):
             # In our setup, this is typically at a fixed offset from end
             seq_logits = logits[i]
 
-            # Get logits at decision position (last position with actual prediction)
+            # Get logits at decision position (first non-masked position)
             # Note: label_ids has -100 for masked positions
+            # We only supervise the decision token, so find the first unmasked position
             decision_pos = -1
-            for pos in range(len(label_ids[i]) - 1, -1, -1):
+            for pos in range(len(label_ids[i])):
                 if label_ids[i][pos] != -100:
                     decision_pos = pos
                     break
