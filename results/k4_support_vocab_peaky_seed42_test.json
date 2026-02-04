@@ -1,0 +1,407 @@
+{
+  "model_path": "/home/biff/eng/ollm/models/k4_support_vocab_peaky_seed42",
+  "test_data_path": "data/k4_support/test.jsonl",
+  "n_test": 120,
+  "run_config": {
+    "task": "k4_support",
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "vocab_mode": "peaky",
+    "seed": 42,
+    "n_classes": 4,
+    "labels": [
+      "emotional",
+      "practical",
+      "ideological",
+      "structural"
+    ]
+  },
+  "timestamp": "2026-02-04T16:09:33.443077",
+  "evaluations": {
+    "basic": {
+      "mode": "basic",
+      "accuracy": 0.9583333333333334,
+      "correct": 115,
+      "total": 120,
+      "per_class_accuracy": {
+        "emotional": 0.9,
+        "practical": 0.9666666666666667,
+        "ideological": 0.9666666666666667,
+        "structural": 1.0
+      },
+      "macro_auc": 0.9966666666666668,
+      "per_class_auc": {
+        "emotional": 0.9977777777777778,
+        "practical": 0.9911111111111112,
+        "ideological": 0.9996296296296296,
+        "structural": 0.9981481481481482
+      },
+      "auc_type": "macro_ovr",
+      "confusion_matrix": [
+        [
+          27,
+          2,
+          1,
+          0
+        ],
+        [
+          0,
+          29,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          29,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          30
+        ]
+      ],
+      "label_order": [
+        "emotional",
+        "practical",
+        "ideological",
+        "structural"
+      ]
+    },
+    "calibration": {
+      "mode": "calibration",
+      "ece": 0.04424534327508729,
+      "mce": 0.8376192656513017,
+      "brier_score": 0.07862874666108939,
+      "n_bins": 10,
+      "bin_data": [
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.7000000000000001,
+          "count": 1,
+          "avg_confidence": 0.6442249316169067,
+          "avg_accuracy": 1.0,
+          "error": 0.35577506838309325
+        },
+        {
+          "bin_lower": 0.7000000000000001,
+          "bin_upper": 0.8,
+          "count": 1,
+          "avg_confidence": 0.7340906941894746,
+          "avg_accuracy": 1.0,
+          "error": 0.2659093058105254
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "count": 1,
+          "avg_confidence": 0.8376192656513017,
+          "avg_accuracy": 0.0,
+          "error": 0.8376192656513017
+        },
+        {
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "count": 117,
+          "avg_confidence": 0.9987191243860304,
+          "avg_accuracy": 0.9658119658119658,
+          "error": 0.032907158574064566
+        }
+      ],
+      "mean_confidence": 0.9922172703718601,
+      "mean_accuracy": 0.9583333333333334
+    },
+    "layerwise": {
+      "mode": "layerwise",
+      "n_layers": 24,
+      "layer_metrics": {
+        "0": {
+          "accuracy": 0.25,
+          "macro_auc": 0.5,
+          "per_class_auc": {
+            "emotional": 0.5,
+            "practical": 0.5,
+            "ideological": 0.5,
+            "structural": 0.5
+          },
+          "auc_type": "macro_ovr"
+        },
+        "1": {
+          "accuracy": 0.25,
+          "macro_auc": 0.5017592592592592,
+          "per_class_auc": {
+            "emotional": 0.4774074074074074,
+            "practical": 0.4596296296296296,
+            "ideological": 0.5014814814814815,
+            "structural": 0.5685185185185184
+          },
+          "auc_type": "macro_ovr"
+        },
+        "2": {
+          "accuracy": 0.25,
+          "macro_auc": 0.47583333333333333,
+          "per_class_auc": {
+            "emotional": 0.45259259259259255,
+            "practical": 0.44925925925925925,
+            "ideological": 0.41037037037037033,
+            "structural": 0.5911111111111111
+          },
+          "auc_type": "macro_ovr"
+        },
+        "3": {
+          "accuracy": 0.25,
+          "macro_auc": 0.4669444444444444,
+          "per_class_auc": {
+            "emotional": 0.4462962962962963,
+            "practical": 0.44296296296296295,
+            "ideological": 0.3855555555555555,
+            "structural": 0.5929629629629629
+          },
+          "auc_type": "macro_ovr"
+        },
+        "4": {
+          "accuracy": 0.25,
+          "macro_auc": 0.4902777777777777,
+          "per_class_auc": {
+            "emotional": 0.49999999999999994,
+            "practical": 0.4918518518518519,
+            "ideological": 0.4762962962962963,
+            "structural": 0.49296296296296294
+          },
+          "auc_type": "macro_ovr"
+        },
+        "5": {
+          "accuracy": 0.25,
+          "macro_auc": 0.4860185185185185,
+          "per_class_auc": {
+            "emotional": 0.4814814814814815,
+            "practical": 0.47962962962962963,
+            "ideological": 0.4311111111111111,
+            "structural": 0.5518518518518518
+          },
+          "auc_type": "macro_ovr"
+        },
+        "6": {
+          "accuracy": 0.25,
+          "macro_auc": 0.46129629629629626,
+          "per_class_auc": {
+            "emotional": 0.4144444444444444,
+            "practical": 0.43666666666666665,
+            "ideological": 0.48851851851851846,
+            "structural": 0.5055555555555555
+          },
+          "auc_type": "macro_ovr"
+        },
+        "7": {
+          "accuracy": 0.25,
+          "macro_auc": 0.41388888888888886,
+          "per_class_auc": {
+            "emotional": 0.40296296296296297,
+            "practical": 0.37925925925925924,
+            "ideological": 0.427037037037037,
+            "structural": 0.4462962962962963
+          },
+          "auc_type": "macro_ovr"
+        },
+        "8": {
+          "accuracy": 0.2833333333333333,
+          "macro_auc": 0.4856481481481481,
+          "per_class_auc": {
+            "emotional": 0.53,
+            "practical": 0.5014814814814814,
+            "ideological": 0.34925925925925916,
+            "structural": 0.5618518518518518
+          },
+          "auc_type": "macro_ovr"
+        },
+        "9": {
+          "accuracy": 0.25,
+          "macro_auc": 0.475,
+          "per_class_auc": {
+            "emotional": 0.4788888888888889,
+            "practical": 0.46777777777777774,
+            "ideological": 0.4022222222222222,
+            "structural": 0.5511111111111111
+          },
+          "auc_type": "macro_ovr"
+        },
+        "10": {
+          "accuracy": 0.225,
+          "macro_auc": 0.49731481481481477,
+          "per_class_auc": {
+            "emotional": 0.5148148148148148,
+            "practical": 0.5018518518518519,
+            "ideological": 0.4933333333333333,
+            "structural": 0.4792592592592593
+          },
+          "auc_type": "macro_ovr"
+        },
+        "11": {
+          "accuracy": 0.25,
+          "macro_auc": 0.49398148148148147,
+          "per_class_auc": {
+            "emotional": 0.512962962962963,
+            "practical": 0.5174074074074074,
+            "ideological": 0.5,
+            "structural": 0.4455555555555556
+          },
+          "auc_type": "macro_ovr"
+        },
+        "12": {
+          "accuracy": 0.25,
+          "macro_auc": 0.4989814814814816,
+          "per_class_auc": {
+            "emotional": 0.4233333333333334,
+            "practical": 0.47703703703703704,
+            "ideological": 0.6918518518518519,
+            "structural": 0.4037037037037038
+          },
+          "auc_type": "macro_ovr"
+        },
+        "13": {
+          "accuracy": 0.25,
+          "macro_auc": 0.5262037037037037,
+          "per_class_auc": {
+            "emotional": 0.47333333333333333,
+            "practical": 0.5829629629629629,
+            "ideological": 0.5977777777777777,
+            "structural": 0.4507407407407408
+          },
+          "auc_type": "macro_ovr"
+        },
+        "14": {
+          "accuracy": 0.25,
+          "macro_auc": 0.5225925925925926,
+          "per_class_auc": {
+            "emotional": 0.48185185185185186,
+            "practical": 0.4866666666666667,
+            "ideological": 0.552962962962963,
+            "structural": 0.5688888888888889
+          },
+          "auc_type": "macro_ovr"
+        },
+        "15": {
+          "accuracy": 0.35833333333333334,
+          "macro_auc": 0.5653703703703704,
+          "per_class_auc": {
+            "emotional": 0.9137037037037037,
+            "practical": 0.4696296296296297,
+            "ideological": 0.32666666666666666,
+            "structural": 0.5514814814814816
+          },
+          "auc_type": "macro_ovr"
+        },
+        "16": {
+          "accuracy": 0.25,
+          "macro_auc": 0.6295370370370371,
+          "per_class_auc": {
+            "emotional": 0.8081481481481482,
+            "practical": 0.5244444444444445,
+            "ideological": 0.7592592592592593,
+            "structural": 0.4262962962962963
+          },
+          "auc_type": "macro_ovr"
+        },
+        "17": {
+          "accuracy": 0.5,
+          "macro_auc": 0.9118518518518518,
+          "per_class_auc": {
+            "emotional": 0.8814814814814815,
+            "practical": 0.904074074074074,
+            "ideological": 0.9348148148148148,
+            "structural": 0.927037037037037
+          },
+          "auc_type": "macro_ovr"
+        },
+        "18": {
+          "accuracy": 0.5333333333333333,
+          "macro_auc": 0.837962962962963,
+          "per_class_auc": {
+            "emotional": 0.8562962962962963,
+            "practical": 0.7603703703703704,
+            "ideological": 0.9066666666666667,
+            "structural": 0.8285185185185185
+          },
+          "auc_type": "macro_ovr"
+        },
+        "19": {
+          "accuracy": 0.6416666666666667,
+          "macro_auc": 0.9175,
+          "per_class_auc": {
+            "emotional": 0.9507407407407408,
+            "practical": 0.8662962962962963,
+            "ideological": 0.9692592592592593,
+            "structural": 0.8837037037037037
+          },
+          "auc_type": "macro_ovr"
+        },
+        "20": {
+          "accuracy": 0.5916666666666667,
+          "macro_auc": 0.7448148148148148,
+          "per_class_auc": {
+            "emotional": 0.9348148148148148,
+            "practical": 0.38666666666666666,
+            "ideological": 0.9437037037037037,
+            "structural": 0.7140740740740741
+          },
+          "auc_type": "macro_ovr"
+        },
+        "21": {
+          "accuracy": 0.95,
+          "macro_auc": 0.9941666666666666,
+          "per_class_auc": {
+            "emotional": 0.9955555555555555,
+            "practical": 0.9844444444444445,
+            "ideological": 1.0,
+            "structural": 0.9966666666666667
+          },
+          "auc_type": "macro_ovr"
+        },
+        "22": {
+          "accuracy": 0.975,
+          "macro_auc": 0.9910185185185185,
+          "per_class_auc": {
+            "emotional": 0.9944444444444445,
+            "practical": 0.9729629629629629,
+            "ideological": 1.0,
+            "structural": 0.9966666666666667
+          },
+          "auc_type": "macro_ovr"
+        },
+        "23": {
+          "accuracy": 0.95,
+          "macro_auc": 0.9931481481481482,
+          "per_class_auc": {
+            "emotional": 0.9974074074074074,
+            "practical": 0.9781481481481481,
+            "ideological": 0.9992592592592593,
+            "structural": 0.9977777777777778
+          },
+          "auc_type": "macro_ovr"
+        },
+        "24": {
+          "accuracy": 0.95,
+          "macro_auc": 0.9969444444444444,
+          "per_class_auc": {
+            "emotional": 0.9974074074074074,
+            "practical": 0.9929629629629629,
+            "ideological": 0.9992592592592592,
+            "structural": 0.9981481481481482
+          },
+          "auc_type": "macro_ovr"
+        }
+      },
+      "crystallization": {
+        "auc_0.90": 17,
+        "auc_0.95": 21,
+        "auc_0.98": 21,
+        "accuracy_0.90": 21,
+        "accuracy_0.95": 21
+      },
+      "final_accuracy": 0.95,
+      "final_auc": 0.9969444444444444
+    }
+  }
+}

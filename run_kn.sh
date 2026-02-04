@@ -265,9 +265,10 @@ eval_all_models() {
             test_r="data/k2_love/R/test.jsonl"
             test_o="data/k2_love/O/test.jsonl"
         else
-            # K4 support - use test.jsonl for both (only one test set)
+            # K4 support - only one held-out test set
+            # (val.jsonl is used for checkpoint selection, can't evaluate on it)
             test_r="data/k4_support/test.jsonl"
-            test_o="data/k4_support/val.jsonl"  # Use val as secondary
+            test_o=""
         fi
 
         for variant in "${variants[@]}"; do
@@ -275,22 +276,31 @@ eval_all_models() {
                 local model_name="${task}_${variant}_seed${seed}"
                 local model_path="${MODELS_DIR}/${model_name}"
 
-                # Eval on Test-R (primary)
+                # Eval on primary test set
+                # K2: test_r (rewritten), K4: test (single held-out set)
                 total=$((total + 1))
-                local output_r="${RESULTS_DIR}/${model_name}_test_r.json"
-                if eval_model "${model_path}" "${test_r}" "test_r" "${output_r}"; then
+                if [ "$task" == "k2_love" ]; then
+                    local output_primary="${RESULTS_DIR}/${model_name}_test_r.json"
+                    local test_label="test_r"
+                else
+                    local output_primary="${RESULTS_DIR}/${model_name}_test.json"
+                    local test_label="test"
+                fi
+                if eval_model "${model_path}" "${test_r}" "${test_label}" "${output_primary}"; then
                     success=$((success + 1))
                 else
                     failed=$((failed + 1))
                 fi
 
-                # Eval on Test-O (secondary)
-                total=$((total + 1))
-                local output_o="${RESULTS_DIR}/${model_name}_test_o.json"
-                if eval_model "${model_path}" "${test_o}" "test_o" "${output_o}"; then
-                    success=$((success + 1))
-                else
-                    failed=$((failed + 1))
+                # Eval on Test-O (K2 only - original/non-rewritten test set)
+                if [ -n "${test_o}" ]; then
+                    total=$((total + 1))
+                    local output_o="${RESULTS_DIR}/${model_name}_test_o.json"
+                    if eval_model "${model_path}" "${test_o}" "test_o" "${output_o}"; then
+                        success=$((success + 1))
+                    else
+                        failed=$((failed + 1))
+                    fi
                 fi
             done
         done
@@ -330,27 +340,35 @@ generate_summary() {
                 echo ""
                 echo "--- ${variant} ---"
 
-                # Collect accuracies across seeds for Test-R
+                # Collect accuracies across seeds for primary test set
                 local accs=""
+                local primary_suffix="_test_r"
+                local primary_label="Test-R"
+                if [ "$task" != "k2_love" ]; then
+                    primary_suffix="_test"
+                    primary_label="Test"
+                fi
                 for seed in "${SEEDS[@]}"; do
-                    local result_file="${RESULTS_DIR}/${task}_${variant}_seed${seed}_test_r.json"
+                    local result_file="${RESULTS_DIR}/${task}_${variant}_seed${seed}${primary_suffix}.json"
                     if [ -f "${result_file}" ]; then
                         local acc=$(python3 -c "import json; d=json.load(open('${result_file}')); print(d.get('evaluations', {}).get('basic', {}).get('accuracy', 'N/A'))" 2>/dev/null || echo "N/A")
                         accs="${accs}${seed}:${acc} "
                     fi
                 done
-                echo "Test-R accuracies: ${accs}"
+                echo "${primary_label} accuracies: ${accs}"
 
-                # Collect accuracies for Test-O
-                accs=""
-                for seed in "${SEEDS[@]}"; do
-                    local result_file="${RESULTS_DIR}/${task}_${variant}_seed${seed}_test_o.json"
-                    if [ -f "${result_file}" ]; then
-                        local acc=$(python3 -c "import json; d=json.load(open('${result_file}')); print(d.get('evaluations', {}).get('basic', {}).get('accuracy', 'N/A'))" 2>/dev/null || echo "N/A")
-                        accs="${accs}${seed}:${acc} "
-                    fi
-                done
-                echo "Test-O accuracies: ${accs}"
+                # Collect accuracies for Test-O (K2 only)
+                if [ "$task" == "k2_love" ]; then
+                    accs=""
+                    for seed in "${SEEDS[@]}"; do
+                        local result_file="${RESULTS_DIR}/${task}_${variant}_seed${seed}_test_o.json"
+                        if [ -f "${result_file}" ]; then
+                            local acc=$(python3 -c "import json; d=json.load(open('${result_file}')); print(d.get('evaluations', {}).get('basic', {}).get('accuracy', 'N/A'))" 2>/dev/null || echo "N/A")
+                            accs="${accs}${seed}:${acc} "
+                        fi
+                    done
+                    echo "Test-O accuracies: ${accs}"
+                fi
             done
         done
 
@@ -381,7 +399,7 @@ main() {
     log "Variants: ddc_a065, ddc_a000, vocab_flat, vocab_peaky, dedicated_baseline"
     log ""
     log "Total training runs: $((${#TASKS[@]} * 5 * ${#SEEDS[@]}))"
-    log "Total evaluation runs: $((${#TASKS[@]} * 5 * ${#SEEDS[@]} * 2))"
+    log "Total evaluation runs: K2=30 (5×3×2 test sets), K4=15 (5×3×1 test set) = 45"
 
     local mode="${1:-all}"
 

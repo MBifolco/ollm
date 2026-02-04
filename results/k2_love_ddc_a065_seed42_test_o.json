@@ -1,0 +1,255 @@
+{
+  "model_path": "/home/biff/eng/ollm/models/k2_love_ddc_a065_seed42",
+  "test_data_path": "data/k2_love/O/test.jsonl",
+  "n_test": 230,
+  "run_config": {
+    "task": "k2_love",
+    "variant": "ddc",
+    "alpha": 0.65,
+    "vocab_mode": null,
+    "seed": 42,
+    "n_classes": 2,
+    "labels": [
+      "romantic",
+      "non-romantic"
+    ]
+  },
+  "timestamp": "2026-02-04T15:15:01.555059",
+  "evaluations": {
+    "basic": {
+      "mode": "basic",
+      "accuracy": 0.9260869565217391,
+      "correct": 213,
+      "total": 230,
+      "per_class_accuracy": {
+        "romantic": 0.8677685950413223,
+        "non-romantic": 0.9908256880733946
+      },
+      "auc": 0.993858518462355,
+      "auc_type": "binary",
+      "positive_class": "romantic",
+      "confusion_matrix": [
+        [
+          105,
+          16
+        ],
+        [
+          1,
+          108
+        ]
+      ],
+      "label_order": [
+        "romantic",
+        "non-romantic"
+      ]
+    },
+    "calibration": {
+      "mode": "calibration",
+      "ece": 0.06042155084912147,
+      "mce": 0.14474698802282548,
+      "brier_score": 0.13540122637066979,
+      "n_bins": 10,
+      "bin_data": [
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.7000000000000001,
+          "count": 2,
+          "avg_confidence": 0.6447469880228255,
+          "avg_accuracy": 0.5,
+          "error": 0.14474698802282548
+        },
+        {
+          "bin_lower": 0.7000000000000001,
+          "bin_upper": 0.8,
+          "count": 4,
+          "avg_confidence": 0.734074316702191,
+          "avg_accuracy": 0.75,
+          "error": 0.015925683297808968
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "count": 4,
+          "avg_confidence": 0.8560139274904479,
+          "avg_accuracy": 0.75,
+          "error": 0.10601392749044791
+        },
+        {
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "count": 220,
+          "avg_confidence": 0.9959986558004512,
+          "avg_accuracy": 0.9363636363636364,
+          "error": 0.05963501943681482
+        }
+      ],
+      "mean_confidence": 0.9859545705605021,
+      "mean_accuracy": 0.9260869565217391
+    },
+    "layerwise": {
+      "mode": "layerwise",
+      "n_layers": 24,
+      "layer_metrics": {
+        "0": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.5,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "1": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.5156948972628705,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "2": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.6001213132155585,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "3": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.6287436500113731,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "4": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.5659640609598908,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "5": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.7191219956023961,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "6": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.5317688983243612,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "7": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.44548487375843504,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "8": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.4607627568428236,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "9": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.5470088710288877,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "10": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.6919402532413375,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "11": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.5463643945712336,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "12": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.6160057623777391,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "13": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.2933505193722041,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "14": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.6150200925013268,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "15": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.2783759193267117,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "16": {
+          "accuracy": 0.5260869565217391,
+          "auc": 0.26131624838880885,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "17": {
+          "accuracy": 0.9173913043478261,
+          "auc": 0.9575782849344151,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "18": {
+          "accuracy": 0.6956521739130435,
+          "auc": 0.9771021305633483,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "19": {
+          "accuracy": 0.808695652173913,
+          "auc": 0.9738797482750777,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "20": {
+          "accuracy": 0.591304347826087,
+          "auc": 0.9268708772461901,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "21": {
+          "accuracy": 0.9434782608695652,
+          "auc": 0.9909773295928425,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "22": {
+          "accuracy": 0.9260869565217391,
+          "auc": 0.9935931458033209,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "23": {
+          "accuracy": 0.9304347826086956,
+          "auc": 0.9939343392220791,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        },
+        "24": {
+          "accuracy": 0.908695652173913,
+          "auc": 0.993934339222079,
+          "auc_type": "binary",
+          "positive_class": "romantic"
+        }
+      },
+      "crystallization": {
+        "auc_0.90": 17,
+        "auc_0.95": 17,
+        "auc_0.98": 21,
+        "accuracy_0.90": 17,
+        "accuracy_0.95": null
+      },
+      "final_accuracy": 0.908695652173913,
+      "final_auc": 0.993934339222079
+    }
+  }
+}

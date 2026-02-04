@@ -1,0 +1,662 @@
+{
+  "k2_love_ddc_a000_seed123_test_o": {
+    "variant": "ddc",
+    "alpha": 0.0,
+    "seed": 123,
+    "test_set": "test_o",
+    "accuracy": 0.9391304347826087,
+    "auc": 0.9882856926226401,
+    "per_class_accuracy": {
+      "romantic": 0.9586776859504132,
+      "non-romantic": 0.9174311926605505
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 22,
+      "accuracy_0.90": 20,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.987413753885814,
+    "ece": 0.032893004241918024,
+    "brier": 0.0837708667188227
+  },
+  "k2_love_ddc_a000_seed123_test_r": {
+    "variant": "ddc",
+    "alpha": 0.0,
+    "seed": 123,
+    "test_set": "test_r",
+    "accuracy": 0.9260869565217391,
+    "auc": 0.9861248009705057,
+    "per_class_accuracy": {
+      "romantic": 0.9338842975206612,
+      "non-romantic": 0.9174311926605505
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 22,
+      "accuracy_0.90": 24,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9841913715975433,
+    "ece": 0.04424285142579572,
+    "brier": 0.11200555515571978
+  },
+  "k2_love_ddc_a000_seed42_test_o": {
+    "variant": "ddc",
+    "alpha": 0.0,
+    "seed": 42,
+    "test_set": "test_o",
+    "accuracy": 0.9565217391304348,
+    "auc": 0.9927970278262188,
+    "per_class_accuracy": {
+      "romantic": 0.9834710743801653,
+      "non-romantic": 0.926605504587156
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 21,
+      "accuracy_0.90": 22,
+      "accuracy_0.95": 23
+    },
+    "final_auc_layerwise": 0.9929486693456668,
+    "ece": 0.02035065143366839,
+    "brier": 0.05936823906905024
+  },
+  "k2_love_ddc_a000_seed42_test_r": {
+    "variant": "ddc",
+    "alpha": 0.0,
+    "seed": 42,
+    "test_set": "test_r",
+    "accuracy": 0.9260869565217391,
+    "auc": 0.9809310789294109,
+    "per_class_accuracy": {
+      "romantic": 0.9090909090909091,
+      "non-romantic": 0.944954128440367
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 22,
+      "accuracy_0.90": 23,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9797179467738267,
+    "ece": 0.0373204608394428,
+    "brier": 0.11331438665090178
+  },
+  "k2_love_ddc_a000_seed456_test_o": {
+    "variant": "ddc",
+    "alpha": 0.0,
+    "seed": 456,
+    "test_set": "test_o",
+    "accuracy": 0.9478260869565217,
+    "auc": 0.9886268860413981,
+    "per_class_accuracy": {
+      "romantic": 0.9669421487603306,
+      "non-romantic": 0.926605504587156
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 21,
+      "auc_0.98": 23,
+      "accuracy_0.90": 21,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9890439002198802,
+    "ece": 0.04379576719680421,
+    "brier": 0.09151826893784687
+  },
+  "k2_love_ddc_a000_seed456_test_r": {
+    "variant": "ddc",
+    "alpha": 0.0,
+    "seed": 456,
+    "test_set": "test_r",
+    "accuracy": 0.8956521739130435,
+    "auc": 0.9743346728334217,
+    "per_class_accuracy": {
+      "romantic": 0.8347107438016529,
+      "non-romantic": 0.963302752293578
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 21,
+      "auc_0.98": null,
+      "accuracy_0.90": null,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.975320342709834,
+    "ece": 0.09051688042973113,
+    "brier": 0.1886028255417348
+  },
+  "k2_love_ddc_a065_seed123_test_o": {
+    "variant": "ddc",
+    "alpha": 0.65,
+    "seed": 123,
+    "test_set": "test_o",
+    "accuracy": 0.9304347826086956,
+    "auc": 0.9891955417393283,
+    "per_class_accuracy": {
+      "romantic": 0.9338842975206612,
+      "non-romantic": 0.926605504587156
+    },
+    "crystallization": {
+      "auc_0.90": 21,
+      "auc_0.95": 21,
+      "auc_0.98": 21,
+      "accuracy_0.90": 22,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9891576313594662,
+    "ece": 0.04197436214193395,
+    "brier": 0.10349039931400178
+  },
+  "k2_love_ddc_a065_seed123_test_r": {
+    "variant": "ddc",
+    "alpha": 0.65,
+    "seed": 123,
+    "test_set": "test_r",
+    "accuracy": 0.9130434782608695,
+    "auc": 0.9760027295473501,
+    "per_class_accuracy": {
+      "romantic": 0.8677685950413223,
+      "non-romantic": 0.963302752293578
+    },
+    "crystallization": {
+      "auc_0.90": 21,
+      "auc_0.95": 21,
+      "auc_0.98": null,
+      "accuracy_0.90": 22,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.976116460686936,
+    "ece": 0.05541640058731349,
+    "brier": 0.14726435765207785
+  },
+  "k2_love_ddc_a065_seed42_test_o": {
+    "variant": "ddc",
+    "alpha": 0.65,
+    "seed": 42,
+    "test_set": "test_o",
+    "accuracy": 0.9260869565217391,
+    "auc": 0.993858518462355,
+    "per_class_accuracy": {
+      "romantic": 0.8677685950413223,
+      "non-romantic": 0.9908256880733946
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 21,
+      "accuracy_0.90": 17,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.993934339222079,
+    "ece": 0.06042155084912147,
+    "brier": 0.13540122637066979
+  },
+  "k2_love_ddc_a065_seed42_test_r": {
+    "variant": "ddc",
+    "alpha": 0.65,
+    "seed": 42,
+    "test_set": "test_r",
+    "accuracy": 0.8782608695652174,
+    "auc": 0.9805898855106528,
+    "per_class_accuracy": {
+      "romantic": 0.7768595041322314,
+      "non-romantic": 0.9908256880733946
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 22,
+      "accuracy_0.90": 21,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9807036166502389,
+    "ece": 0.1009890264691543,
+    "brier": 0.2176696853840889
+  },
+  "k2_love_ddc_a065_seed456_test_o": {
+    "variant": "ddc",
+    "alpha": 0.65,
+    "seed": 456,
+    "test_set": "test_o",
+    "accuracy": 0.9347826086956522,
+    "auc": 0.9846083857760254,
+    "per_class_accuracy": {
+      "romantic": 0.9173553719008265,
+      "non-romantic": 0.9541284403669725
+    },
+    "crystallization": {
+      "auc_0.90": 19,
+      "auc_0.95": 21,
+      "auc_0.98": 21,
+      "accuracy_0.90": 22,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9844188338767155,
+    "ece": 0.05012734960636897,
+    "brier": 0.1177713670848553
+  },
+  "k2_love_ddc_a065_seed456_test_r": {
+    "variant": "ddc",
+    "alpha": 0.65,
+    "seed": 456,
+    "test_set": "test_r",
+    "accuracy": 0.8826086956521739,
+    "auc": 0.9784669042383805,
+    "per_class_accuracy": {
+      "romantic": 0.8099173553719008,
+      "non-romantic": 0.963302752293578
+    },
+    "crystallization": {
+      "auc_0.90": 19,
+      "auc_0.95": 21,
+      "auc_0.98": null,
+      "accuracy_0.90": null,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9776328758814163,
+    "ece": 0.10254012315962473,
+    "brier": 0.19920849912967972
+  },
+  "k2_love_dedicated_baseline_seed123_test_o": {
+    "variant": "dedicated_baseline",
+    "alpha": null,
+    "seed": 123,
+    "test_set": "test_o",
+    "accuracy": 0.9391304347826087,
+    "auc": 0.9882856926226401,
+    "per_class_accuracy": {
+      "romantic": 0.9586776859504132,
+      "non-romantic": 0.9174311926605505
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 22,
+      "accuracy_0.90": 20,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.987413753885814,
+    "ece": 0.032893004241918024,
+    "brier": 0.0837708667188227
+  },
+  "k2_love_dedicated_baseline_seed123_test_r": {
+    "variant": "dedicated_baseline",
+    "alpha": null,
+    "seed": 123,
+    "test_set": "test_r",
+    "accuracy": 0.9260869565217391,
+    "auc": 0.9861248009705057,
+    "per_class_accuracy": {
+      "romantic": 0.9338842975206612,
+      "non-romantic": 0.9174311926605505
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 22,
+      "accuracy_0.90": 24,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9841913715975433,
+    "ece": 0.04424285142579572,
+    "brier": 0.11200555515571978
+  },
+  "k2_love_dedicated_baseline_seed42_test_o": {
+    "variant": "dedicated_baseline",
+    "alpha": null,
+    "seed": 42,
+    "test_set": "test_o",
+    "accuracy": 0.9565217391304348,
+    "auc": 0.9927970278262188,
+    "per_class_accuracy": {
+      "romantic": 0.9834710743801653,
+      "non-romantic": 0.926605504587156
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 21,
+      "accuracy_0.90": 22,
+      "accuracy_0.95": 23
+    },
+    "final_auc_layerwise": 0.9929486693456668,
+    "ece": 0.02035065143366839,
+    "brier": 0.05936823906905024
+  },
+  "k2_love_dedicated_baseline_seed42_test_r": {
+    "variant": "dedicated_baseline",
+    "alpha": null,
+    "seed": 42,
+    "test_set": "test_r",
+    "accuracy": 0.9260869565217391,
+    "auc": 0.9809310789294109,
+    "per_class_accuracy": {
+      "romantic": 0.9090909090909091,
+      "non-romantic": 0.944954128440367
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 22,
+      "accuracy_0.90": 23,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9797179467738267,
+    "ece": 0.0373204608394428,
+    "brier": 0.11331438665090178
+  },
+  "k2_love_dedicated_baseline_seed456_test_o": {
+    "variant": "dedicated_baseline",
+    "alpha": null,
+    "seed": 456,
+    "test_set": "test_o",
+    "accuracy": 0.9478260869565217,
+    "auc": 0.9886268860413981,
+    "per_class_accuracy": {
+      "romantic": 0.9669421487603306,
+      "non-romantic": 0.926605504587156
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 21,
+      "auc_0.98": 23,
+      "accuracy_0.90": 21,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9890439002198802,
+    "ece": 0.04379576719680421,
+    "brier": 0.09151826893784687
+  },
+  "k2_love_dedicated_baseline_seed456_test_r": {
+    "variant": "dedicated_baseline",
+    "alpha": null,
+    "seed": 456,
+    "test_set": "test_r",
+    "accuracy": 0.8956521739130435,
+    "auc": 0.9743346728334217,
+    "per_class_accuracy": {
+      "romantic": 0.8347107438016529,
+      "non-romantic": 0.963302752293578
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 21,
+      "auc_0.98": null,
+      "accuracy_0.90": null,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.975320342709834,
+    "ece": 0.09051688042973113,
+    "brier": 0.1886028255417348
+  },
+  "k2_love_vocab_flat_seed123_test_o": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 123,
+    "test_set": "test_o",
+    "accuracy": 0.9608695652173913,
+    "auc": 0.9930244901053907,
+    "per_class_accuracy": {
+      "romantic": 0.9586776859504132,
+      "non-romantic": 0.963302752293578
+    },
+    "crystallization": {
+      "auc_0.90": 16,
+      "auc_0.95": 17,
+      "auc_0.98": 17,
+      "accuracy_0.90": 21,
+      "accuracy_0.95": 22
+    },
+    "final_auc_layerwise": 0.9928728485859429,
+    "ece": 0.03280479992031168,
+    "brier": 0.06738157172559915
+  },
+  "k2_love_vocab_flat_seed123_test_r": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 123,
+    "test_set": "test_r",
+    "accuracy": 0.8695652173913043,
+    "auc": 0.9729319887785276,
+    "per_class_accuracy": {
+      "romantic": 0.8181818181818182,
+      "non-romantic": 0.926605504587156
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": null,
+      "accuracy_0.90": null,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9728182576389416,
+    "ece": 0.10902237787527558,
+    "brier": 0.22772819059429775
+  },
+  "k2_love_vocab_flat_seed42_test_o": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 42,
+    "test_set": "test_o",
+    "accuracy": 0.9347826086956522,
+    "auc": 0.9874516642656759,
+    "per_class_accuracy": {
+      "romantic": 0.9917355371900827,
+      "non-romantic": 0.8715596330275229
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 17,
+      "accuracy_0.90": 21,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.987830768064296,
+    "ece": 0.04114929421746328,
+    "brier": 0.10018562241184993
+  },
+  "k2_love_vocab_flat_seed42_test_r": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 42,
+    "test_set": "test_r",
+    "accuracy": 0.8739130434782608,
+    "auc": 0.9555690348017286,
+    "per_class_accuracy": {
+      "romantic": 0.8760330578512396,
+      "non-romantic": 0.8715596330275229
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 22,
+      "auc_0.98": null,
+      "accuracy_0.90": null,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9553415725225567,
+    "ece": 0.04459893841220885,
+    "brier": 0.17541824683448146
+  },
+  "k2_love_vocab_flat_seed456_test_o": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 456,
+    "test_set": "test_o",
+    "accuracy": 0.9391304347826087,
+    "auc": 0.9889680794601562,
+    "per_class_accuracy": {
+      "romantic": 0.9834710743801653,
+      "non-romantic": 0.8899082568807339
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 17,
+      "accuracy_0.90": 21,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9888922587004322,
+    "ece": 0.037141656269957274,
+    "brier": 0.10041375857121419
+  },
+  "k2_love_vocab_flat_seed456_test_r": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 456,
+    "test_set": "test_r",
+    "accuracy": 0.908695652173913,
+    "auc": 0.9737281067556296,
+    "per_class_accuracy": {
+      "romantic": 0.8842975206611571,
+      "non-romantic": 0.9357798165137615
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": null,
+      "accuracy_0.90": 22,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9730457199181136,
+    "ece": 0.044281964589189045,
+    "brier": 0.1374168010101167
+  },
+  "k2_love_vocab_peaky_seed123_test_o": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 123,
+    "test_set": "test_o",
+    "accuracy": 0.9434782608695652,
+    "auc": 0.9971946318902115,
+    "per_class_accuracy": {
+      "romantic": 1.0,
+      "non-romantic": 0.8807339449541285
+    },
+    "crystallization": {
+      "auc_0.90": 21,
+      "auc_0.95": 21,
+      "auc_0.98": 21,
+      "accuracy_0.90": 24,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9971946318902116,
+    "ece": 0.04588543262863812,
+    "brier": 0.09734823066085055
+  },
+  "k2_love_vocab_peaky_seed123_test_r": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 123,
+    "test_set": "test_r",
+    "accuracy": 0.9347826086956522,
+    "auc": 0.9748275077716279,
+    "per_class_accuracy": {
+      "romantic": 0.9421487603305785,
+      "non-romantic": 0.926605504587156
+    },
+    "crystallization": {
+      "auc_0.90": 21,
+      "auc_0.95": 21,
+      "auc_0.98": null,
+      "accuracy_0.90": 24,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9738797482750777,
+    "ece": 0.0691060274217998,
+    "brier": 0.13109506656302564
+  },
+  "k2_love_vocab_peaky_seed42_test_o": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 42,
+    "test_set": "test_o",
+    "accuracy": 0.9478260869565217,
+    "auc": 0.9949958298582152,
+    "per_class_accuracy": {
+      "romantic": 0.9669421487603306,
+      "non-romantic": 0.926605504587156
+    },
+    "crystallization": {
+      "auc_0.90": 19,
+      "auc_0.95": 21,
+      "auc_0.98": 21,
+      "accuracy_0.90": 21,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9948441883387671,
+    "ece": 0.027117939760617077,
+    "brier": 0.067468345568024
+  },
+  "k2_love_vocab_peaky_seed42_test_r": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 42,
+    "test_set": "test_r",
+    "accuracy": 0.8869565217391304,
+    "auc": 0.9735006444764576,
+    "per_class_accuracy": {
+      "romantic": 0.8429752066115702,
+      "non-romantic": 0.9357798165137615
+    },
+    "crystallization": {
+      "auc_0.90": 19,
+      "auc_0.95": 21,
+      "auc_0.98": null,
+      "accuracy_0.90": 24,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9724770642201835,
+    "ece": 0.08376966281967031,
+    "brier": 0.18056228716792136
+  },
+  "k2_love_vocab_peaky_seed456_test_o": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 456,
+    "test_set": "test_o",
+    "accuracy": 0.9608695652173913,
+    "auc": 0.9963985139131095,
+    "per_class_accuracy": {
+      "romantic": 0.9752066115702479,
+      "non-romantic": 0.944954128440367
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 17,
+      "accuracy_0.90": 21,
+      "accuracy_0.95": 22
+    },
+    "final_auc_layerwise": 0.9962468723936614,
+    "ece": 0.017758911628174303,
+    "brier": 0.055135765535409886
+  },
+  "k2_love_vocab_peaky_seed456_test_r": {
+    "variant": "vocab_baseline",
+    "alpha": null,
+    "seed": 456,
+    "test_set": "test_r",
+    "accuracy": 0.9260869565217391,
+    "auc": 0.9807036166502389,
+    "per_class_accuracy": {
+      "romantic": 0.9256198347107438,
+      "non-romantic": 0.926605504587156
+    },
+    "crystallization": {
+      "auc_0.90": 17,
+      "auc_0.95": 17,
+      "auc_0.98": 23,
+      "accuracy_0.90": 21,
+      "accuracy_0.95": null
+    },
+    "final_auc_layerwise": 0.9804761543710668,
+    "ece": 0.05420773655475571,
+    "brier": 0.12491117788087751
+  }
+}

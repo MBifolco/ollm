@@ -92,7 +92,10 @@ def load_trained_model(model_path: str):
     )
 
     # Resize embeddings to match tokenizer (for DDC/dedicated variants)
-    if len(tokenizer) > model.config.vocab_size:
+    # The saved adapter has embeddings sized to the tokenizer used during training,
+    # so we need to match that size before loading the adapter
+    if len(tokenizer) != model.config.vocab_size:
+        print(f"Resizing embeddings: {model.config.vocab_size} -> {len(tokenizer)}")
         model.resize_token_embeddings(len(tokenizer))
 
     # Load LoRA adapter (this also loads saved embedding layers if present)

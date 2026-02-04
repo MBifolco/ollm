@@ -1,0 +1,146 @@
+============================================================
+KN EXPERIMENT RESULTS SUMMARY
+Generated: Wed Feb  4 04:19:37 PM EST 2026
+============================================================
+
+
+============================================================
+TASK: k2_love
+============================================================
+
+--- ddc_a065 ---
+Test-R accuracies: 42:0.8782608695652174 123:0.9130434782608695 456:0.8826086956521739 
+Test-O accuracies: 42:0.9260869565217391 123:0.9304347826086956 456:0.9347826086956522 
+
+--- ddc_a000 ---
+Test-R accuracies: 42:0.9260869565217391 123:0.9260869565217391 456:0.8956521739130435 
+Test-O accuracies: 42:0.9565217391304348 123:0.9391304347826087 456:0.9478260869565217 
+
+--- vocab_flat ---
+Test-R accuracies: 42:0.8739130434782608 123:0.8695652173913043 456:0.908695652173913 
+Test-O accuracies: 42:0.9347826086956522 123:0.9608695652173913 456:0.9391304347826087 
+
+--- vocab_peaky ---
+Test-R accuracies: 42:0.8869565217391304 123:0.9347826086956522 456:0.9260869565217391 
+Test-O accuracies: 42:0.9478260869565217 123:0.9434782608695652 456:0.9608695652173913 
+
+--- dedicated_baseline ---
+Test-R accuracies: 42:0.9260869565217391 123:0.9260869565217391 456:0.8956521739130435 
+Test-O accuracies: 42:0.9565217391304348 123:0.9391304347826087 456:0.9478260869565217 
+
+============================================================
+TASK: k4_support
+============================================================
+
+--- ddc_a065 ---
+Test-R accuracies: 42:0.9583333333333334 123:0.9583333333333334 456:0.9833333333333333 
+Test-O accuracies: 42:1.0 123:0.9916666666666667 456:0.9833333333333333 
+
+--- ddc_a000 ---
+Test-R accuracies: 42:0.95 123:0.975 456:0.975 
+Test-O accuracies: 42:0.9833333333333333 123:1.0 456:0.9833333333333333 
+
+--- vocab_flat ---
+Test-R accuracies: 42:0.9583333333333334 123:0.9583333333333334 456:0.9666666666666667 
+Test-O accuracies: 42:1.0 123:0.9916666666666667 456:1.0 
+
+--- vocab_peaky ---
+Test-R accuracies: 42:0.9583333333333334 123:0.95 456:0.9416666666666667 
+Test-O accuracies: 42:1.0 123:1.0 456:1.0 
+
+--- dedicated_baseline ---
+Test-R accuracies: 42:0.95 123:0.975 456:0.975 
+Test-O accuracies: 42:0.9833333333333333 123:1.0 456:0.9833333333333333 
+
+============================================================
+RESULT FILES
+============================================================
+-rw-rw-r-- 1 biff biff    316 Feb  3 18:32 /home/biff/eng/ollm/results/ablation_results.json
+-rw-rw-r-- 1 biff biff   3270 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_actual.json
+-rw-rw-r-- 1 biff biff   2963 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_random_M_testR.json
+-rw-rw-r-- 1 biff biff   2965 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_random-seminit_M_testR.json
+-rw-rw-r-- 1 biff biff   2968 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_random_testR.json
+-rw-rw-r-- 1 biff biff   5708 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_results.json
+-rw-rw-r-- 1 biff biff   3311 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_rn.json
+-rw-rw-r-- 1 biff biff   2977 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_rn_mixed_testR.json
+-rw-rw-r-- 1 biff biff   2950 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_semantic_M_testR.json
+-rw-rw-r-- 1 biff biff   2958 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_semantic_O_testR.json
+-rw-rw-r-- 1 biff biff   2960 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_semantic-randinit_M_testR.json
+-rw-rw-r-- 1 biff biff   2947 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_single_M_testR.json
+-rw-rw-r-- 1 biff biff   2944 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_single_testR.json
+-rw-rw-r-- 1 biff biff   2925 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_token_mixed_testR.json
+-rw-rw-r-- 1 biff biff   3273 Feb  3 18:32 /home/biff/eng/ollm/results/early_exit_unified_test.json
+-rw-rw-r-- 1 biff biff    534 Feb  3 18:32 /home/biff/eng/ollm/results/evaluation_results_gpu.json
+-rw-rw-r-- 1 biff biff    640 Jan 29 00:58 /home/biff/eng/ollm/results/evaluation_results.json
+-rw-rw-r-- 1 biff biff 166374 Feb  3 18:32 /home/biff/eng/ollm/results/exp3a_full_results.json
+-rw-rw-r-- 1 biff biff  42163 Feb  3 18:32 /home/biff/eng/ollm/results/exp3a_subset_results.json
+-rw-rw-r-- 1 biff biff   7192 Feb  4 15:27 /home/biff/eng/ollm/results/k2_love_ddc_a000_seed123_test_o.json
+-rw-rw-r-- 1 biff biff   7213 Feb  4 15:25 /home/biff/eng/ollm/results/k2_love_ddc_a000_seed123_test_r.json
+-rw-rw-r-- 1 biff biff   7400 Feb  4 15:24 /home/biff/eng/ollm/results/k2_love_ddc_a000_seed42_test_o.json
+-rw-rw-r-- 1 biff biff   7214 Feb  4 15:23 /home/biff/eng/ollm/results/k2_love_ddc_a000_seed42_test_r.json
+-rw-rw-r-- 1 biff biff   6938 Feb  4 15:30 /home/biff/eng/ollm/results/k2_love_ddc_a000_seed456_test_o.json
+-rw-rw-r-- 1 biff biff   7200 Feb  4 15:28 /home/biff/eng/ollm/results/k2_love_ddc_a000_seed456_test_r.json
+-rw-rw-r-- 1 biff biff   7209 Feb  4 15:19 /home/biff/eng/ollm/results/k2_love_ddc_a065_seed123_test_o.json
+-rw-rw-r-- 1 biff biff   7183 Feb  4 15:17 /home/biff/eng/ollm/results/k2_love_ddc_a065_seed123_test_r.json
+-rw-rw-r-- 1 biff biff   6951 Feb  4 15:16 /home/biff/eng/ollm/results/k2_love_ddc_a065_seed42_test_o.json
+-rw-rw-r-- 1 biff biff   7226 Feb  4 15:14 /home/biff/eng/ollm/results/k2_love_ddc_a065_seed42_test_r.json
+-rw-rw-r-- 1 biff biff   6952 Feb  4 15:21 /home/biff/eng/ollm/results/k2_love_ddc_a065_seed456_test_o.json
+-rw-rw-r-- 1 biff biff   7205 Feb  4 15:20 /home/biff/eng/ollm/results/k2_love_ddc_a065_seed456_test_r.json
+-rw-rw-r-- 1 biff biff   7218 Feb  4 15:51 /home/biff/eng/ollm/results/k2_love_dedicated_baseline_seed123_test_o.json
+-rw-rw-r-- 1 biff biff   7239 Feb  4 15:50 /home/biff/eng/ollm/results/k2_love_dedicated_baseline_seed123_test_r.json
+-rw-rw-r-- 1 biff biff   7426 Feb  4 15:49 /home/biff/eng/ollm/results/k2_love_dedicated_baseline_seed42_test_o.json
+-rw-rw-r-- 1 biff biff   7240 Feb  4 15:48 /home/biff/eng/ollm/results/k2_love_dedicated_baseline_seed42_test_r.json
+-rw-rw-r-- 1 biff biff   6964 Feb  4 15:54 /home/biff/eng/ollm/results/k2_love_dedicated_baseline_seed456_test_o.json
+-rw-rw-r-- 1 biff biff   7226 Feb  4 15:53 /home/biff/eng/ollm/results/k2_love_dedicated_baseline_seed456_test_r.json
+-rw-rw-r-- 1 biff biff  17481 Feb  4 16:11 /home/biff/eng/ollm/results/k2_love_summary.json
+-rw-rw-r-- 1 biff biff   7214 Feb  4 15:35 /home/biff/eng/ollm/results/k2_love_vocab_flat_seed123_test_o.json
+-rw-rw-r-- 1 biff biff   6983 Feb  4 15:34 /home/biff/eng/ollm/results/k2_love_vocab_flat_seed123_test_r.json
+-rw-rw-r-- 1 biff biff   7260 Feb  4 15:32 /home/biff/eng/ollm/results/k2_love_vocab_flat_seed42_test_o.json
+-rw-rw-r-- 1 biff biff   7256 Feb  4 15:31 /home/biff/eng/ollm/results/k2_love_vocab_flat_seed42_test_r.json
+-rw-rw-r-- 1 biff biff   7236 Feb  4 15:38 /home/biff/eng/ollm/results/k2_love_vocab_flat_seed456_test_o.json
+-rw-rw-r-- 1 biff biff   7270 Feb  4 15:36 /home/biff/eng/ollm/results/k2_love_vocab_flat_seed456_test_r.json
+-rw-rw-r-- 1 biff biff   7181 Feb  4 15:43 /home/biff/eng/ollm/results/k2_love_vocab_peaky_seed123_test_o.json
+-rw-rw-r-- 1 biff biff   7206 Feb  4 15:42 /home/biff/eng/ollm/results/k2_love_vocab_peaky_seed123_test_r.json
+-rw-rw-r-- 1 biff biff   7229 Feb  4 15:41 /home/biff/eng/ollm/results/k2_love_vocab_peaky_seed42_test_o.json
+-rw-rw-r-- 1 biff biff   7232 Feb  4 15:39 /home/biff/eng/ollm/results/k2_love_vocab_peaky_seed42_test_r.json
+-rw-rw-r-- 1 biff biff   7251 Feb  4 15:46 /home/biff/eng/ollm/results/k2_love_vocab_peaky_seed456_test_o.json
+-rw-rw-r-- 1 biff biff   7209 Feb  4 15:45 /home/biff/eng/ollm/results/k2_love_vocab_peaky_seed456_test_r.json
+-rw-rw-r-- 1 biff biff  28509 Feb  3 18:32 /home/biff/eng/ollm/results/k4_crystallization_results.json
+-rw-rw-r-- 1 biff biff  11048 Feb  4 16:02 /home/biff/eng/ollm/results/k4_support_ddc_a000_seed123_test_o.json
+-rw-rw-r-- 1 biff biff  11892 Feb  4 16:01 /home/biff/eng/ollm/results/k4_support_ddc_a000_seed123_test_r.json
+-rw-rw-r-- 1 biff biff  11680 Feb  4 16:00 /home/biff/eng/ollm/results/k4_support_ddc_a000_seed42_test_o.json
+-rw-rw-r-- 1 biff biff  11947 Feb  4 16:00 /home/biff/eng/ollm/results/k4_support_ddc_a000_seed42_test_r.json
+-rw-rw-r-- 1 biff biff  11286 Feb  4 16:03 /home/biff/eng/ollm/results/k4_support_ddc_a000_seed456_test_o.json
+-rw-rw-r-- 1 biff biff  11668 Feb  4 16:03 /home/biff/eng/ollm/results/k4_support_ddc_a000_seed456_test_r.json
+-rw-rw-r-- 1 biff biff  10980 Feb  4 15:57 /home/biff/eng/ollm/results/k4_support_ddc_a065_seed123_test_o.json
+-rw-rw-r-- 1 biff biff  11547 Feb  4 15:56 /home/biff/eng/ollm/results/k4_support_ddc_a065_seed123_test_r.json
+-rw-rw-r-- 1 biff biff  10463 Feb  4 15:56 /home/biff/eng/ollm/results/k4_support_ddc_a065_seed42_test_o.json
+-rw-rw-r-- 1 biff biff  11519 Feb  4 15:55 /home/biff/eng/ollm/results/k4_support_ddc_a065_seed42_test_r.json
+-rw-rw-r-- 1 biff biff  11467 Feb  4 15:59 /home/biff/eng/ollm/results/k4_support_ddc_a065_seed456_test_o.json
+-rw-rw-r-- 1 biff biff  11480 Feb  4 15:58 /home/biff/eng/ollm/results/k4_support_ddc_a065_seed456_test_r.json
+-rw-rw-r-- 1 biff biff  11074 Feb  4 16:17 /home/biff/eng/ollm/results/k4_support_dedicated_baseline_seed123_test_o.json
+-rw-rw-r-- 1 biff biff  11918 Feb  4 16:16 /home/biff/eng/ollm/results/k4_support_dedicated_baseline_seed123_test_r.json
+-rw-rw-r-- 1 biff biff  11706 Feb  4 16:16 /home/biff/eng/ollm/results/k4_support_dedicated_baseline_seed42_test_o.json
+-rw-rw-r-- 1 biff biff  11973 Feb  4 16:15 /home/biff/eng/ollm/results/k4_support_dedicated_baseline_seed42_test_r.json
+-rw-rw-r-- 1 biff biff  11312 Feb  4 16:19 /home/biff/eng/ollm/results/k4_support_dedicated_baseline_seed456_test_o.json
+-rw-rw-r-- 1 biff biff  11694 Feb  4 16:18 /home/biff/eng/ollm/results/k4_support_dedicated_baseline_seed456_test_r.json
+-rw-rw-r-- 1 biff biff  11505 Feb  4 16:07 /home/biff/eng/ollm/results/k4_support_vocab_flat_seed123_test_o.json
+-rw-rw-r-- 1 biff biff  11928 Feb  4 16:06 /home/biff/eng/ollm/results/k4_support_vocab_flat_seed123_test_r.json
+-rw-rw-r-- 1 biff biff  10901 Feb  4 16:05 /home/biff/eng/ollm/results/k4_support_vocab_flat_seed42_test_o.json
+-rw-rw-r-- 1 biff biff  11535 Feb  4 16:04 /home/biff/eng/ollm/results/k4_support_vocab_flat_seed42_test_r.json
+-rw-rw-r-- 1 biff biff  11002 Feb  4 16:09 /home/biff/eng/ollm/results/k4_support_vocab_flat_seed456_test_o.json
+-rw-rw-r-- 1 biff biff  12017 Feb  4 16:08 /home/biff/eng/ollm/results/k4_support_vocab_flat_seed456_test_r.json
+-rw-rw-r-- 1 biff biff  11016 Feb  4 16:12 /home/biff/eng/ollm/results/k4_support_vocab_peaky_seed123_test_o.json
+-rw-rw-r-- 1 biff biff  11843 Feb  4 16:12 /home/biff/eng/ollm/results/k4_support_vocab_peaky_seed123_test_r.json
+-rw-rw-r-- 1 biff biff  11055 Feb  4 16:11 /home/biff/eng/ollm/results/k4_support_vocab_peaky_seed42_test_o.json
+-rw-rw-r-- 1 biff biff  11883 Feb  4 16:10 /home/biff/eng/ollm/results/k4_support_vocab_peaky_seed42_test_r.json
+-rw-rw-r-- 1 biff biff  10776 Feb  4 16:14 /home/biff/eng/ollm/results/k4_support_vocab_peaky_seed456_test_o.json
+-rw-rw-r-- 1 biff biff  11558 Feb  4 16:13 /home/biff/eng/ollm/results/k4_support_vocab_peaky_seed456_test_r.json
+-rw-rw-r-- 1 biff biff  52501 Feb  3 18:32 /home/biff/eng/ollm/results/label_set_selection.json
+-rw-rw-r-- 1 biff biff  70231 Feb  3 18:32 /home/biff/eng/ollm/results/label_set_selection_k2.json
+-rw-rw-r-- 1 biff biff  77830 Feb  3 18:32 /home/biff/eng/ollm/results/label_set_selection_k4.json
+-rw-rw-r-- 1 biff biff 254146 Feb  3 18:32 /home/biff/eng/ollm/results/layerwise_results.json
+-rw-rw-r-- 1 biff biff   2375 Feb  3 18:32 /home/biff/eng/ollm/results/seed_check_results.json
+-rw-rw-r-- 1 biff biff 237845 Feb  3 18:32 /home/biff/eng/ollm/results/track1_results.json
+-rw-rw-r-- 1 biff biff  64740 Feb  3 18:32 /home/biff/eng/ollm/results/track2_results.json
+-rw-rw-r-- 1 biff biff   6927 Feb  3 18:32 /home/biff/eng/ollm/results/triad_results.json
