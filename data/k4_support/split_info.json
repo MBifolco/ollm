@@ -1,0 +1,12 @@
+{
+  "seed": 42,
+  "train_ratio": 0.8,
+  "val_ratio": 0.1,
+  "test_ratio": 0.09999999999999995,
+  "train_bases": 240,
+  "val_bases": 30,
+  "test_bases": 30,
+  "train_examples": 960,
+  "val_examples": 120,
+  "test_examples": 120
+}
