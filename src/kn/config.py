@@ -44,6 +44,10 @@ class TaskConfig:
     # Dedicated baseline tokens (new vocab, neutral strings)
     dedicated_tokens: Dict[str, str]  # label -> token string
 
+    # Label-word answers (for label_word_first_token variant)
+    # Maps label -> full answer word the model outputs (first token is scored)
+    label_word_answers: Dict[str, str]
+
     # Semantic initialization words per label
     semantic_init_words: Dict[str, List[str]]
 
@@ -78,6 +82,10 @@ K2_LOVE_CONFIG = TaskConfig(
     dedicated_tokens={
         "romantic": "⟦BASE_R⟧",
         "non-romantic": "⟦BASE_N⟧",
+    },
+    label_word_answers={
+        "romantic": "romantic",
+        "non-romantic": "nonromantic",  # No hyphen to avoid tokenization split
     },
     semantic_init_words={
         "romantic": ["love", "romance", "romantic", "passion"],
@@ -119,6 +127,12 @@ K4_SUPPORT_CONFIG = TaskConfig(
         "practical": "⟦BASE_P⟧",
         "ideological": "⟦BASE_I⟧",
         "structural": "⟦BASE_S⟧",
+    },
+    label_word_answers={
+        "emotional": "emotional",
+        "practical": "practical",
+        "ideological": "ideological",
+        "structural": "structural",
     },
     semantic_init_words={
         "emotional": ["emotional", "feeling", "feelings", "emotion"],

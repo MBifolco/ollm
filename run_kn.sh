@@ -10,6 +10,7 @@
 #   - vocab_flat: Vocab baseline with minimal prior bias tokens
 #   - vocab_peaky: Vocab baseline with high prior bias tokens (stress test)
 #   - dedicated_baseline: New tokens with random initialization
+#   - label_word_ft: Label word baseline, first-token scoring, no new tokens
 #
 # Tasks:
 #   - k2_love: Binary love disambiguation (romantic vs non-romantic)
@@ -191,6 +192,19 @@ train_all_models() {
             else
                 failed=$((failed + 1))
             fi
+
+            # Label word first token baseline
+            total=$((total + 1))
+            if train_model "${task}" "label_word_first_token" "${seed}" ""; then
+                local src="${MODELS_DIR}/${task}_label_word_first_token_seed${seed}"
+                local dst="${MODELS_DIR}/${task}_label_word_ft_seed${seed}"
+                if [ -d "${src}" ] && [ ! -d "${dst}" ]; then
+                    mv "${src}" "${dst}"
+                fi
+                success=$((success + 1))
+            else
+                failed=$((failed + 1))
+            fi
         done
     done
 
@@ -253,7 +267,7 @@ eval_all_models() {
     local failed=0
 
     # Define all variants (must match training output names)
-    local variants=("ddc_a065" "ddc_a000" "vocab_flat" "vocab_peaky" "dedicated_baseline")
+    local variants=("ddc_a065" "ddc_a000" "vocab_flat" "vocab_peaky" "dedicated_baseline" "label_word_ft")
 
     for task in "${TASKS[@]}"; do
         # Determine test data paths
@@ -334,7 +348,7 @@ generate_summary() {
             echo "TASK: ${task}"
             echo "============================================================"
 
-            local variants=("ddc_a065" "ddc_a000" "vocab_flat" "vocab_peaky" "dedicated_baseline")
+            local variants=("ddc_a065" "ddc_a000" "vocab_flat" "vocab_peaky" "dedicated_baseline" "label_word_ft")
 
             for variant in "${variants[@]}"; do
                 echo ""
@@ -396,10 +410,10 @@ main() {
     log ""
     log "Tasks: ${TASKS[*]}"
     log "Seeds: ${SEEDS[*]}"
-    log "Variants: ddc_a065, ddc_a000, vocab_flat, vocab_peaky, dedicated_baseline"
+    log "Variants: ddc_a065, ddc_a000, vocab_flat, vocab_peaky, dedicated_baseline, label_word_ft"
     log ""
-    log "Total training runs: $((${#TASKS[@]} * 5 * ${#SEEDS[@]}))"
-    log "Total evaluation runs: K2=30 (5×3×2 test sets), K4=15 (5×3×1 test set) = 45"
+    log "Total training runs: $((${#TASKS[@]} * 6 * ${#SEEDS[@]}))"
+    log "Total evaluation runs: K2=36 (6×3×2 test sets), K4=18 (6×3×1 test set) = 54"
 
     local mode="${1:-all}"
 

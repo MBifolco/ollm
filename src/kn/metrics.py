@@ -88,7 +88,8 @@ def probe_decision_priors(
     model, tokenizer, token_info: Dict[str, Dict],
     task_config: TaskConfig, tokens: Dict[str, str],
     data_dir: str = None,
-    n_samples: int = 5
+    n_samples: int = 5,
+    decision_prefix_rendered: str = None
 ) -> Dict[str, Any]:
     """
     Probe the model's prior preferences at the DECISION: locus.
@@ -137,7 +138,8 @@ def probe_decision_priors(
     with torch.no_grad():
         for scenario in sample_scenarios:
             example = {"scenario": scenario}
-            input_text = format_input(example, task_config, tokens)
+            input_text = format_input(example, task_config, tokens,
+                                      decision_prefix_rendered=decision_prefix_rendered)
 
             messages = [{"role": "user", "content": input_text}]
             prompt = tokenizer.apply_chat_template(

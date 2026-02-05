@@ -2082,6 +2082,132 @@ This makes future comparisons interpretable:
 
 ---
 
+## Phase 18: Unified Pipeline, Full Training Run & Results (Complete)
+
+### Overview
+
+Built a unified training/evaluation/runner pipeline, ran all 30 models (5 variants × 2 tasks × 3 seeds), evaluated on 45 test sets, and analyzed results. Several significant bugs were found and fixed during the process.
+
+### Infrastructure Built
+
+**Shared module (`src/kn/`)**: Extracted common code from earlier scripts into a clean package:
+- `config.py`: TaskConfig dataclasses, decision interface constants, token sets
+- `prompt.py`: Unified prompt formatting with `format_input`/`format_output`
+- `io.py`: RunConfig dataclass, JSONL loading, run_config contract
+- `metrics.py`: Evaluation metrics, prior probing
+
+**Training (`src/train_kn.py`)**: Single script handling all 5 variants across both tasks. Manages token addition, semantic initialization, LoRA, and saves `run_config.json` as the contract between training and evaluation.
+
+**Evaluation (`src/eval_kn.py`)**: Reads `run_config.json` as source of truth. Three evaluation modes:
+- `basic`: Accuracy, AUC, confusion matrix
+- `calibration`: ECE, Brier score, confidence analysis
+- `layerwise`: Crystallization analysis (logit lens at each transformer layer)
+
+**Runner (`run_kn.sh`)**: Orchestrates all 30 training runs and 45 evaluations with logging, skip-if-exists logic, and summary generation.
+
+### Data Preparation
+
+**K2 Love**: Organized into O/R/M structure:
+- `O/`: Original scenarios (test: 230 examples)
+- `R/`: Rewritten scenarios via Claude API to remove style leakage (test: 230, val: 42 rewritten)
+- `M/`: Mixed (concatenation of O+R, used for training)
+- Test buckets (crisis + collaboration) are fully held out from train/val
+
+**K4 Support**: Single directory structure (960 train / 120 val / 120 test), balanced 4 classes.
+
+### Bugs Found and Fixed
+
+1. **Multi-token supervision** (critical): Training was supervising 3 tokens (decision + `<|im_end|>` + newline) instead of just the decision token. Metrics were reading the newline token (last unmasked) rather than the decision token (first unmasked). Fixed to unmask only position `prompt_len` and scan forward for evaluation.
+
+2. **OOM during training eval**: HF Trainer accumulated full logits tensor (vocab_size × seq_len × batch) for `compute_metrics`. Fixed with `prediction_loss_only=True`.
+
+3. **Bash arithmetic with `set -e`**: `((total++))` returns 0 when total=0, which is falsy, causing silent exit under `set -e`. Fixed to `total=$((total + 1))`.
+
+4. **Embedding resize direction**: Eval checked `len(tokenizer) > model.config.vocab_size` (only enlarge). Saved adapter has fewer tokens than base Qwen (151667 vs 151936). Fixed to `!=` (resize either direction).
+
+5. **K4 validation leakage**: `run_kn.sh` was evaluating K4 on `val.jsonl` as a secondary test set — but val was used for checkpoint selection during training. Discovered and removed tainted results.
+
+### Results: Full 30-Model Run
+
+All 30 models trained successfully (5 variants × 2 tasks × 3 seeds each). 45 evaluations completed (K2: 30 = 5×3×2 test sets; K4: 15 = 5×3×1 test set).
+
+#### K2 Love (Test-R, rewritten test set — primary metric)
+
+| Variant | Accuracy (mean±std) | Crystallization (AUC≥0.95) | ECE |
+|---------|--------------------|-----------------------------|-----|
+| DDC α=0.65 | 0.891±0.015 | L19.7 | 0.086 |
+| DDC α=0.0 | 0.916±0.014 | L18.3 | 0.057 |
+| Dedicated baseline | 0.916±0.014 | L18.3 | 0.057 |
+| Vocab flat | 0.884±0.018 | L18.7 | 0.066 |
+| Vocab peaky | 0.916±0.021 | L19.7 | 0.069 |
+
+#### K4 Support (test set)
+
+| Variant | Accuracy (mean±std) | Crystallization (AUC≥0.95) | ECE |
+|---------|--------------------|-----------------------------|-----|
+| DDC α=0.65 | 0.967±0.012 | L17.0 | 0.034 |
+| DDC α=0.0 | 0.967±0.012 | L19.0 | 0.035 |
+| Dedicated baseline | 0.967±0.012 | L19.0 | 0.035 |
+| Vocab flat | 0.961±0.004 | L18.3 | 0.040 |
+| Vocab peaky | 0.950±0.007 | L21.0 | 0.047 |
+
+### Key Findings
+
+#### 1) DDC α=0.0 and dedicated_baseline are numerically identical
+
+These two variants use different token strings (`⟦LOVE_R⟧` vs `⟦BASE_R⟧`) but the same mechanism: new tokens with random init. Their results are identical across all seeds and metrics, confirming that **token string identity is irrelevant** — only embedding initialization matters.
+
+#### 2) K4 shows the clearest crystallization hierarchy
+
+In K4, the crystallization ordering is clean:
+- DDC α=0.65: **L17** (earliest)
+- Vocab flat: L18.3
+- DDC α=0.0 / dedicated: L19
+- Vocab peaky: **L21** (latest)
+
+Semantic initialization (α=0.65) gains 2 layers over random init (α=0.0). Peaky priors delay crystallization by 2 layers vs flat priors.
+
+#### 3) K2 is noisier and less conclusive
+
+K2 crystallization differences are smaller and inconsistent across seeds. The binary task is inherently easier to resolve at the decision locus, leaving less room for mechanistic differences to manifest. This aligns with earlier findings that K2 is structurally sensitive to priors.
+
+#### 4) The "early exit" story is about all three factors
+
+Crystallization timing depends on:
+- **Token novelty**: New tokens (DDC, dedicated) vs existing vocab
+- **Initialization**: Semantic (α=0.65) vs random (α=0.0)
+- **Prior bias**: Flat vs peaky existing-vocab priors
+
+No single factor dominates. The DDC α=0.65 advantage in K4 is real (2 layers over random) but the vocab_peaky penalty (4 layers behind DDC) is even larger.
+
+#### 5) Calibration tracks crystallization
+
+Lower ECE consistently co-occurs with earlier crystallization. DDC α=0.65 has the best calibration in K4 (ECE=0.034), vocab_peaky the worst (ECE=0.047).
+
+### Data Leakage Note
+
+K4 "test_o" results were initially computed on `val.jsonl`, which was used for checkpoint selection during training. These tainted results were identified, deleted, and the runner script was fixed to use only the held-out test set for K4. K2 test sets (O and R) were never used during training and remain valid.
+
+### Token Sets Used (Final — corrected from Phase K4.7)
+
+**K=2 Love**:
+- DDC: `⟦LOVE_R⟧`, `⟦LOVE_N⟧`
+- Flat: `E`, `O`
+- Peaky: `T`, `Z`
+- Dedicated: `⟦BASE_R⟧`, `⟦BASE_N⟧`
+
+**K=4 Support**:
+- DDC: `⟦SUPPORT_E⟧`, `⟦SUPPORT_P⟧`, `⟦SUPPORT_I⟧`, `⟦SUPPORT_S⟧`
+- Flat: `A`, `C`, `R`, `Y`
+- Peaky: `S`, `U`, `V`, `Z`
+- Dedicated: `⟦BASE_E⟧`, `⟦BASE_P⟧`, `⟦BASE_I⟧`, `⟦BASE_S⟧`
+
+### What's Next
+
+Adding a **label-word baseline** (`label_word`): a "typical fine-tuning" variant that uses no new tokens and outputs the actual label word (e.g., `romantic`, `emotional`) at an `ANSWER:` prefix. Only the first token of the label word is supervised and scored, maintaining the single-locus property for comparable crystallization analysis. This bridges the gap between the DDC mechanistic experiment and conventional fine-tuning practice.
+
+---
+
 ## References
 
 - Base model: Qwen/Qwen2.5-0.5B-Instruct

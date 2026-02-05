@@ -60,13 +60,17 @@ def format_output(example: Dict, tokens: Dict[str, str]) -> str:
     return token
 
 
-def log_prompt_format(task_config: TaskConfig, tokens: Dict[str, str], token_info: Dict[str, Dict]):
+def log_prompt_format(
+    task_config: TaskConfig, tokens: Dict[str, str], token_info: Dict[str, Dict],
+    decision_prefix_rendered: str = None
+):
     """Log the exact prompt format for reproducibility and debugging."""
     print(f"\n{'='*60}")
     print("PROMPT FORMAT VERIFICATION")
     print(f"{'='*60}")
 
-    print(f"\nDecision prefix: '{DECISION_PREFIX}'")
+    prefix_display = decision_prefix_rendered if decision_prefix_rendered else f"{DECISION_PREFIX} "
+    print(f"\nDecision prefix: '{prefix_display.strip()}'")
     print(f"Decision only (no label after token): {DECISION_ONLY}")
     print(f"Tokenization policy: {TOKENIZATION_POLICY}")
     print(f"Label ordering: {task_config.labels}")
@@ -74,7 +78,8 @@ def log_prompt_format(task_config: TaskConfig, tokens: Dict[str, str], token_inf
     # Show example input
     example_scenario = "A person expresses deep feelings..."
     example_input = format_input(
-        {"scenario": example_scenario}, task_config, tokens
+        {"scenario": example_scenario}, task_config, tokens,
+        decision_prefix_rendered=decision_prefix_rendered
     )
     print(f"\nExample input format:")
     print("-" * 40)

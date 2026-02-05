@@ -13,6 +13,7 @@ Model variants:
 - ddc: New tokens with semantic initialization (alpha controls interpolation)
 - vocab_baseline: Existing vocabulary tokens with flat/peaky prior modes
 - dedicated_baseline: New tokens with random init (control for token novelty)
+- label_word_first_token: No new tokens, predicts label words, scores first token only
 
 Key design principles:
 - Single supervised token position (DECISION: <token>)
@@ -86,14 +87,16 @@ from kn import (
 
 def create_training_example(
     example: Dict, tokenizer, max_length: int,
-    task_config: TaskConfig, tokens: Dict[str, str]
+    task_config: TaskConfig, tokens: Dict[str, str],
+    decision_prefix_rendered: str = None
 ) -> Dict:
     """Create a single training example with proper label masking.
 
     Uses consistent tokenization pathway for both full sequence
     and prompt-only to avoid off-by-N masking errors.
     """
-    input_text = format_input(example, task_config, tokens)
+    input_text = format_input(example, task_config, tokens,
+                              decision_prefix_rendered=decision_prefix_rendered)
     output_text = format_output(example, tokens)
 
     # Build messages
@@ -151,7 +154,8 @@ def create_training_example(
 
 def prepare_datasets(
     data_dir: str, tokenizer, max_length: int,
-    task_config: TaskConfig, tokens: Dict[str, str]
+    task_config: TaskConfig, tokens: Dict[str, str],
+    decision_prefix_rendered: str = None
 ):
     """Prepare train and validation datasets."""
     train_path = os.path.join(data_dir, "train.jsonl")
@@ -166,7 +170,8 @@ def prepare_datasets(
         for ex in examples:
             try:
                 processed.append(create_training_example(
-                    ex, tokenizer, max_length, task_config, tokens
+                    ex, tokenizer, max_length, task_config, tokens,
+                    decision_prefix_rendered=decision_prefix_rendered
                 ))
             except Exception as e:
                 print(f"Error processing example: {e}")
@@ -239,8 +244,20 @@ def train(
         tokens_to_add = list(tokens.values())
         use_semantic_init = False
         alpha = 0.0  # Force random init for dedicated baseline
+    elif variant == "label_word_first_token":
+        tokens = task_config.label_word_answers.copy()
+        tokens_to_add = []
+        use_semantic_init = False
     else:
         raise ValueError(f"Unknown variant: {variant}")
+
+    # Set decision prefix (single source of truth for this run)
+    if variant == "label_word_first_token":
+        decision_prefix = "ANSWER:"
+        decision_prefix_rendered = "ANSWER: "
+    else:
+        decision_prefix = DECISION_PREFIX
+        decision_prefix_rendered = f"{DECISION_PREFIX} "
 
     # Generate output directory if not specified
     if output_dir is None:
@@ -251,6 +268,8 @@ def train(
             output_dir = f"models/{task}/vocab_{vocab_mode}_seed{seed}"
         elif variant == "dedicated_baseline":
             output_dir = f"models/{task}/dedicated_seed{seed}"
+        elif variant == "label_word_first_token":
+            output_dir = f"models/{task}/label_word_ft_seed{seed}"
 
     os.makedirs(output_dir, exist_ok=True)
 
@@ -286,34 +305,70 @@ def train(
     # Verify all tokens are single tokens and collect metadata
     print("\nVerifying token configuration:")
     token_info = {}
-    original_tokens = tokens.copy()  # Keep original for logging
-    is_new_token = bool(tokens_to_add)  # True if we added new tokens
-    for label in task_config.labels:  # Use ordered labels
-        token = tokens[label]
-        info = verify_single_token(tokenizer, token, label, is_new_token=is_new_token)
-        token_info[label] = info
-        # Canonicalize to matched_variant (critical for correctness)
-        tokens[label] = info["matched_variant"]
 
-    if tokens != original_tokens:
-        print("\n  ⚠ Tokens canonicalized to matched variants:")
+    if variant == "label_word_first_token":
+        # For label_word: extract first token of each answer word, then verify it
+        print("  Extracting first tokens from answer words:")
+        first_token_ids = {}
         for label in task_config.labels:
-            if tokens[label] != original_tokens[label]:
-                print(f"    {label}: '{original_tokens[label]}' -> '{tokens[label]}'")
+            answer_word = tokens[label]
+            ids = tokenizer.encode(answer_word, add_special_tokens=False)
+            first_id = ids[0]
+            first_str = tokenizer.decode([first_id])
+            print(f"    {label}: '{answer_word}' -> {len(ids)} tokens, "
+                  f"first='{first_str}' (id={first_id})")
 
-    # Safety check: vocab_baseline tokens must not be space-prefixed
-    # (With nospace policy, this should never happen, but guard against it)
-    if variant == "vocab_baseline":
-        for label, info in token_info.items():
-            if info["is_space_prefixed"]:
+            # Verify the first-token string round-trips via verify_single_token
+            info = verify_single_token(tokenizer, first_str, label, is_new_token=False)
+            token_info[label] = info
+            first_token_ids[label] = first_id
+
+            # Extra safety: verify the verified token_id matches what we extracted
+            if info["token_id"] != first_id:
                 raise ValueError(
-                    f"Vocab token for '{label}' matched as space-prefixed "
-                    f"'{info['matched_variant']}'. With nospace policy, pick tokens "
-                    "that tokenize without a leading-space variant."
+                    f"First-token roundtrip mismatch for '{label}': "
+                    f"extracted id={first_id}, verified id={info['token_id']}. "
+                    f"Tokenizer may have whitespace quirks."
                 )
 
+        # Verify all first tokens are unique across classes
+        unique_ids = set(first_token_ids.values())
+        if len(unique_ids) != len(first_token_ids):
+            raise ValueError(
+                f"First tokens are not unique across classes: {first_token_ids}. "
+                "Choose different answer words."
+            )
+        print(f"  All {len(unique_ids)} first tokens are unique.")
+        # tokens dict keeps the full answer words (for format_output and prompt display)
+    else:
+        original_tokens = tokens.copy()  # Keep original for logging
+        is_new_token = bool(tokens_to_add)  # True if we added new tokens
+        for label in task_config.labels:  # Use ordered labels
+            token = tokens[label]
+            info = verify_single_token(tokenizer, token, label, is_new_token=is_new_token)
+            token_info[label] = info
+            # Canonicalize to matched_variant (critical for correctness)
+            tokens[label] = info["matched_variant"]
+
+        if tokens != original_tokens:
+            print("\n  ⚠ Tokens canonicalized to matched variants:")
+            for label in task_config.labels:
+                if tokens[label] != original_tokens[label]:
+                    print(f"    {label}: '{original_tokens[label]}' -> '{tokens[label]}'")
+
+        # Safety check: vocab_baseline tokens must not be space-prefixed
+        if variant == "vocab_baseline":
+            for label, info in token_info.items():
+                if info["is_space_prefixed"]:
+                    raise ValueError(
+                        f"Vocab token for '{label}' matched as space-prefixed "
+                        f"'{info['matched_variant']}'. With nospace policy, pick tokens "
+                        "that tokenize without a leading-space variant."
+                    )
+
     # Log prompt format for reproducibility
-    log_prompt_format(task_config, tokens, token_info)
+    log_prompt_format(task_config, tokens, token_info,
+                      decision_prefix_rendered=decision_prefix_rendered)
 
     # Load model
     print(f"\nLoading base model: {config.base_model}")
@@ -362,12 +417,13 @@ def train(
                 n_new_tokens=n_new_tokens
             )
 
-    # Probe decision priors for vocab baseline
+    # Probe decision priors for vocab baseline and label_word variants
     prior_probe_stats = None
-    if variant == "vocab_baseline":
-        print("\nProbing decision locus priors...")
+    if variant in ("vocab_baseline", "label_word_first_token"):
+        print(f"\nProbing decision locus priors at '{decision_prefix}'...")
         prior_probe_stats = probe_decision_priors(
-            model, tokenizer, token_info, task_config, tokens, data_dir=data_dir
+            model, tokenizer, token_info, task_config, tokens, data_dir=data_dir,
+            decision_prefix_rendered=decision_prefix_rendered
         )
         print(f"  Worst-case maxp: {prior_probe_stats['worst_case_maxp']:.4f}")
         print(f"  Mean maxp: {prior_probe_stats['mean_maxp']:.4f}")
@@ -389,7 +445,8 @@ def train(
     # Prepare datasets
     print("\nPreparing datasets...")
     train_dataset, val_dataset = prepare_datasets(
-        data_dir, tokenizer, config.max_seq_length, task_config, tokens
+        data_dir, tokenizer, config.max_seq_length, task_config, tokens,
+        decision_prefix_rendered=decision_prefix_rendered
     )
     print(f"Train: {len(train_dataset)}, Val: {len(val_dataset)}")
 
@@ -449,8 +506,8 @@ def train(
 
     # Save run config for reproducibility
     # This is the contract between train and eval - eval trusts these values
-    example_input = format_input({"scenario": "[SCENARIO]"}, task_config, tokens)
-    # Note: format_output returns just the token (no space), prompt ends with "DECISION: "
+    example_input = format_input({"scenario": "[SCENARIO]"}, task_config, tokens,
+                                 decision_prefix_rendered=decision_prefix_rendered)
     example_outputs = {label: format_output({"label": label}, tokens) for label in task_config.labels}
 
     # Get version info for reproducibility
@@ -472,8 +529,8 @@ def train(
         "seed": seed,
 
         # Decision interface guardrails
-        "decision_prefix": DECISION_PREFIX,
-        "decision_prefix_rendered": f"{DECISION_PREFIX} ",  # With trailing space for prompts
+        "decision_prefix": decision_prefix,
+        "decision_prefix_rendered": decision_prefix_rendered,
         "decision_only": DECISION_ONLY,
         "tokenization_policy": TOKENIZATION_POLICY,
 
@@ -543,6 +600,9 @@ Examples:
 
   # K=4 dedicated baseline (new tokens, random init)
   python src/train_kn.py --task k4_support --variant dedicated_baseline
+
+  # K=2 label word baseline (no new tokens, first-token scoring)
+  python src/train_kn.py --task k2_love --variant label_word_first_token
         """
     )
 
@@ -551,7 +611,8 @@ Examples:
                        choices=list(TASK_CONFIGS.keys()),
                        help="Task to train on")
     parser.add_argument("--variant", type=str, required=True,
-                       choices=["ddc", "vocab_baseline", "dedicated_baseline"],
+                       choices=["ddc", "vocab_baseline", "dedicated_baseline",
+                                "label_word_first_token"],
                        help="Model variant")
 
     # Initialization

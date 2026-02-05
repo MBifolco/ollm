@@ -3,7 +3,7 @@
 
 # Trained models (large binaries)
 models/
-
+logs/
 # Results (can be regenerated)
 evaluation_results.json
 

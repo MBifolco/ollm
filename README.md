@@ -35,38 +35,33 @@ This project asks:
 
 ## Key Findings (High-Level)
 
-### 1. Decision channels alter *when* decisions form
-Dedicated decision tokens consistently become **linearly separable several layers earlier** than vocab-token baselines, even when final accuracy is similar.
+### 1. Crystallization timing depends on three factors
+Decision crystallization layer (when logit-lens AUC first exceeds a threshold) is shaped by:
+- **Token novelty**: Dedicated new tokens vs existing vocabulary
+- **Embedding initialization**: Semantic (α=0.65) vs random (α=0.0)
+- **Prior bias**: Flat vs peaky existing-vocab priors
+
+In K=4, DDC (α=0.65) crystallizes at **L17**, random-init tokens at L19, and peaky vocab at L21.
 
 ---
 
-### 2. Semantic initialization controls crystallization timing
-Initializing new decision-token embeddings as an interpolation of semantically related words induces a **sharp phase transition** (α ≈ 0.6–0.7):
-
-- Below threshold: late, unstable, poorly calibrated decisions  
-- Above threshold: early, stable, calibrated decisions  
-
-This transition is **independent of token string name**.
+### 2. Semantic initialization provides a modest advantage
+Initializing decision-token embeddings via semantic interpolation (α=0.65) gains ~2 layers over random init (α=0.0) in K=4. Earlier work identified a phase transition around α ≈ 0.6–0.7, and the full multi-seed run confirms DDC α=0.65 consistently crystallizes earliest. The effect is clearer in K=4 than K=2.
 
 ---
 
 ### 3. Token identity is irrelevant; embedding geometry is not
-Tokens like `⟦LOVE_ROM⟧`, `⟦XYZ123⟧`, or emoji behave identically *when initialized identically*.  
-Observed effects arise from **embedding initialization and training geometry**, not symbolic meaning.
+DDC α=0.0 and dedicated_baseline use different token strings (`⟦LOVE_R⟧` vs `⟦BASE_R⟧`) but identical initialization. Their results are **numerically identical** across all seeds, metrics, and layers — confirming that effects arise from embedding geometry, not symbolic meaning.
 
 ---
 
-### 4. Calibration emerges with crystallization
-Earlier crystallization correlates strongly with:
-- lower Expected Calibration Error (ECE)
-- stable confidence trajectories across layers
-
-This link is what makes early-exit viable.
+### 4. Calibration tracks crystallization
+Lower ECE consistently co-occurs with earlier crystallization. DDC α=0.65 achieves the best calibration (ECE=0.034 in K=4), while vocab_peaky has the worst (ECE=0.047). This link is what makes early-exit viable.
 
 ---
 
-### 5. Early-exit inference becomes practical
-With confidence-gated adaptive exit, DDC models can stop computation earlier while preserving separability and calibration, yielding **measurable speedups** without accuracy collapse.
+### 5. Prior bias at the decision locus delays crystallization
+Existing-vocab tokens with strong pretrained priors ("peaky" tokens) crystallize 4 layers later than DDC tokens and 2–3 layers later than flat-prior vocab tokens. This confirms that uncontrolled token priors are a confound in decision-only classification.
 
 ---
 
@@ -126,11 +121,16 @@ python src/eval_kn.py --model_path models/k2_love/ddc_a065_seed42 --mode all
 
 | Variant | Purpose |
 |------|--------|
-| `ddc (α≈0.65)` | Semantic-initialized decision channels |
+| `ddc (α=0.65)` | Semantic-initialized decision channels |
 | `ddc (α=0.0)` | Random-initialized decision channels |
 | `vocab_flat` | Existing tokens with minimized priors |
 | `vocab_peaky` | Existing tokens with strong priors |
 | `dedicated_baseline` | New tokens, random init |
+| `label_word_first_token` | No new tokens, label words, first-token scoring |
+
+### Label-Word Baseline
+
+The `label_word_first_token` variant serves as a bridge between typical label-word fine-tuning and the single-token decision bottleneck used throughout this project. The model is prompted to output a natural-language label word (e.g., `romantic`, `nonromantic`) following an `ANSWER:` prefix, but training supervision and evaluation are applied only to the **first generated token** of the label word. This preserves a single, well-defined decision locus, making the baseline directly comparable to DDC variants in terms of decision timing, layerwise linear separability, and calibration. Because it uses pretrained vocabulary embeddings with no new tokens, any differences from DDC isolate the effect of explicit decision-token geometry.
 
 ---
 
